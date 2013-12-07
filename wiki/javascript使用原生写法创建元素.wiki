@@ -1,4 +1,4 @@
-{{{class="brush: Jscript"
+{{{class="brush: javascript"
 var a = document.createElement('a');
 a.href = '#';
 a.onclick = function(e){

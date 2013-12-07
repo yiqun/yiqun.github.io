@@ -34,6 +34,7 @@ hr {
 
 #wrap #content {
 	/*width                 : 80%;*/
+	/*margin-bottom: 30px;*/
 }
 
 /*#wrap #sidebar {*/
@@ -51,9 +52,10 @@ hr {
 #wrap > #content > #article > ul{
 	padding: 0;
 	margin: 0;
+	list-style: none;
 }
 
-#wrap > #content > #article > ul > li{
-	display: inline-block;
-	width: 33%;
-}
+/*#wrap > #content > #article > ul > li{*/
+	/*display: inline-block;*/
+	/*width: 33%;*/
+/*}*/
