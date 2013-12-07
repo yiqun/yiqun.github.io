@@ -32,11 +32,31 @@
 					c.innerHTML = '&lt;返回';
 					e.insertBefore(c, e.firstChild);
 				} else {
-					e.innerHTML = document.title = '逸群技术笔记';
+					e.innerHTML = document.title = '逸群技术拾遗录';
 					var s = document.createElement('style');
 					s.type = 'text/css';
-					s.appendChild(document.createTextNode('#wrap > #content > #article > ul > li{ display: inline-block; width: 33%; }'));
+					s.appendChild(document.createTextNode('.gsc-search-box{margin:0!important;padding:0!important}#wrap>#content>#article>ul>li{display:inline-block;width:33%;}'));
 					document.getElementsByTagName('head')[0].appendChild(s);
+					// google search
+					(function() {
+					 var cx = '013783129810095556381:ylgnf4tpsna';
+					 var gcse = document.createElement('script');
+					 gcse.type = 'text/javascript';
+					 gcse.async = true;
+					 gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+					 '//www.google.com/cse/cse.js?cx=' + cx;
+					 var s = document.getElementsByTagName('script')[0];
+					 s.parentNode.insertBefore(gcse, s);
+					 })();
+					var dv = document.createElement('div');
+					dv.style.width = "600px";
+					dv.style.float = 'right';
+					dv.style.marginTop = '-10px';
+					dv.style.marginBottom = '10px';
+					var g = document.createElement('gcse:searchbox-only');
+					dv.appendChild(g);
+					e.insertBefore(dv, e.firstChild);
+					//document.write('<gcse:searchbox-only></gcse:searchbox-only>');
 				}
 			};
 		</script> 
