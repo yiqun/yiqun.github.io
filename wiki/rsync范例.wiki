@@ -1,0 +1,19 @@
+{{{class="brush: bash"
+#/etc/rsyncd.conf
+uid=apache
+gid=apache
+strict modes=true
+port=29113
+logfile=/var/log/rsyncd.log
+pidfile=/var/run/rsyncd.pid
+max connections=100
+secrets file=/etc/rsyncd.secret
+auth users=andrew
+read only=no
+
+[project_name]
+path=/var/www/html/project_name
+
+#/etc/rsyncd.secret
+andrew:123456
+}}}

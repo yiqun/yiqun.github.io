@@ -1,0 +1,3 @@
+{{{class="brush: bash"
+find . -not -name "." -not -name "file_1_name" -not -name "file_2_name" | xargs rm -rf
+}}}

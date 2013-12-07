@@ -16,25 +16,187 @@
 		<script type="text/javascript" src="static/js/shBrushSql.js"></script>
 		<script type="text/javascript">
 			SyntaxHighlighter.all();
+			function onload(){
+				var e = document.getElementById('title');
+				if ('/' != location.href.substr(-1) && -1 == location.href.indexOf('index.html')) {
+					var e = document.getElementById('title');
+					var c = document.createElement('a');
+					c.href = '#';
+					c.onclick = function(e){
+						e.preventDefault();
+						history.back(-1);
+					};
+					c.style.float = 'right';
+					c.style.fontSize = '14px';
+					c.style.fontWeight = 'normal';
+					c.innerHTML = '&lt;返回';
+					e.insertBefore(c, e.firstChild);
+				} else {
+					e.innerHTML = '逸群技术笔记';
+				}
+			};
 		</script> 
 	</head>
 	<body>
 		<div id="wrap">
+			<h4 id="title">index</h4>
+			<script type="text/javascript">onload();</script>
+			<hr>
 			<div id="content">
 				<div id="article">
 					
-<p>
-<script>
-location='AndrewLi\'s-wiki.html';
-</script>
-</p>
+<ul>
+<li>
+<a href="删除win7残留的无权限文件.html">删除win7残留的无权限文件</a>
 
-<p>
-<a href="AndrewLi's-wiki.html">AndrewLi's-wiki</a>
-</p>
+<li>
+<a href="linux忘记root密码.html">linux忘记root密码</a>
+
+<li>
+<a href="创建vsftpd虚拟帐号.html">创建vsftpd虚拟帐号</a>
+
+<li>
+<a href="以apache来运行vsftpd.html">以apache来运行vsftpd</a>
+
+<li>
+<a href="mutt通过postfix发送邮件.html">mutt通过postfix发送邮件</a>
+
+<li>
+<a href="免邮箱注册google帐号.html">免邮箱注册google帐号</a>
+
+<li>
+<a href="calibre问题汇总.html">calibre问题汇总</a>
+
+<li>
+<a href="mysql忘记管理密码.html">mysql忘记管理密码</a>
+
+<li>
+<a href="创建项目脚本.html">创建项目脚本</a>
+
+<li>
+<a href="删除大目录.html">删除大目录</a>
+
+<li>
+<a href="删除除指定文件外的文件.html">删除除指定文件外的文件</a>
+
+<li>
+<a href="查找文件数量.html">查找文件数量</a>
+
+<li>
+<a href="误删libc.so.6.html">误删libc.so.6</a>
+
+<li>
+<a href="解压文件.html">解压文件</a>
+
+<li>
+<a href="挂载usb.html">挂载usb</a>
+
+<li>
+<a href="linux帐号管理.html">linux帐号管理</a>
+
+<li>
+<a href="linux更新系统时间.html">linux更新系统时间</a>
+
+<li>
+<a href="强制卸载设备.html">强制卸载设备</a>
+
+<li>
+<a href="openssl生成pem.html">openssl生成pem</a>
+
+<li>
+<a href="linux swap未就绪错误.html">linux swap未就绪错误</a>
+
+<li>
+<a href="使用指定帐号执行命令.html">使用指定帐号执行命令</a>
+
+<li>
+<a href="获取命令行参数.html">获取命令行参数</a>
+
+<li>
+<a href="shell中for的语法.html">shell中for的语法</a>
+
+<li>
+<a href="echo换行符.html">echo换行符</a>
+
+<li>
+<a href="linux按ctrl+z后恢复操作界面.html">linux按ctrl+z后恢复操作界面</a>
+
+<li>
+<a href="linux批量关闭进程.html">linux批量关闭进程</a>
+
+<li>
+<a href="linux无密码登陆.html">linux无密码登陆</a>
+
+<li>
+<a href="linux检测进程是否存在.html">linux检测进程是否存在</a>
+
+<li>
+<a href="创建apache ssl key.html">创建apache ssl key</a>
+
+<li>
+<a href="修改默认编辑器.html">修改默认编辑器</a>
+
+<li>
+<a href="ls列表过滤.html">ls列表过滤</a>
+
+<li>
+<a href="查找并删除.html">查找并删除</a>
+
+<li>
+<a href="拷贝过滤.html">拷贝过滤</a>
+
+<li>
+<a href="输出大文字.html">输出大文字</a>
+
+<li>
+<a href="批量修改dos格式到unix格式.html">批量修改dos格式到unix格式</a>
+
+<li>
+<a href="测试优盘读写速度.html">测试优盘读写速度</a>
+
+<li>
+<a href="php启动服务.html">php启动服务</a>
+
+<li>
+<a href="git删除子模块.html">git删除子模块</a>
+
+<li>
+<a href="rsync范例.html">rsync范例</a>
+
+<li>
+<a href="javascript console.log颜色.html">javascript console.log颜色</a>
+
+<li>
+<a href="php捕捉exec错误.html">php捕捉exec错误</a>
+
+<li>
+<a href="rubygem降级.html">rubygem降级</a>
+
+<li>
+<a href="三星N9002刷Google服务.html">三星N9002刷Google服务</a>
+
+<li>
+<a href="redmine启动脚本.html">redmine启动脚本</a>
+
+<li>
+<a href="javascript使用原生写法创建元素.html">javascript使用原生写法创建元素</a>
+
+</ul>
 
 				</div>
 			</div>
 		</div>
+		<script type="text/javascript">
+		/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+		var disqus_shortname = 'yiqungithubio'; // required: replace example with your forum shortname
+
+		/* * * DON'T EDIT BELOW THIS LINE * * */
+		(function () {
+		 var s = document.createElement('script'); s.async = true;
+		 s.type = 'text/javascript';
+		 s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+		 (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+		 }());
+		</script>
 	</body>
 </html>

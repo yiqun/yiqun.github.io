@@ -1,0 +1,11 @@
+- 软件
+ - Odin3 3.07 http://pan.baidu.com/share/link?shareid=1109150573&uk=489934412
+ - cwm recovery http://pan.baidu.com/pcloud/album/info?uk=704970239&album_id=5100402027498447427
+ - Google包 http://pan.baidu.com/share/link?shareid=2333963048&uk=1764418763
+- 步骤
+ - 手机系统：设定->一般->安全性，取消“启用重新启动锁定”
+ - 手机系统：拷贝Google包至SDCard
+ - 按[Volume-]+Home+Power进入线刷模式
+ - PC：Odin刷cwm recovery
+ - 按[Volume+]+Home+Power进入Recovery模式
+ - 选择Google包，安装

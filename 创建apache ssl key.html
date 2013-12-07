@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>%title%</title>
+		<title>创建apache ssl key</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -39,12 +39,17 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">%title%</h4>
+			<h4 id="title">创建apache ssl key</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
-					%content%
+					
+<pre class="brush: bash">
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt
+</pre>
+
 				</div>
 			</div>
 		</div>

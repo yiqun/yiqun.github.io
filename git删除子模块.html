@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>%title%</title>
+		<title>git删除子模块</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -39,12 +39,19 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">%title%</h4>
+			<h4 id="title">git删除子模块</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
-					%content%
+					
+<pre class="brush: bash">
+git rm --cached path_to_submodule
+rm -rf path_to_submodule
+git commit -m "remove submodule"
+git push
+</pre>
+
 				</div>
 			</div>
 		</div>

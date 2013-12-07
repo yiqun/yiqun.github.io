@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>%title%</title>
+		<title>linux检测进程是否存在</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -39,12 +39,38 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">%title%</h4>
+			<h4 id="title">linux检测进程是否存在</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
-					%content%
+					
+<ul>
+<li>
+方法一:
+<pre class="brush: bash">
+if test $( pgrep -f "$1" | wc -l ) -eq 0
+	then
+		echo "进程不存在"
+else
+	echo "存在进程"
+fi
+</pre>
+
+<li>
+方法二:
+<pre class="brush: bash">
+PROCESS=`ps aux|grep "$1"|grep -v grep`
+if ["$PROCESS" == ""]
+	then
+		echo "进程不存在"
+else
+	echo "进程存在"
+fi
+</pre>
+
+</ul>
+
 				</div>
 			</div>
 		</div>

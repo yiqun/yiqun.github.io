@@ -1,0 +1,20 @@
+- ebook-convert时Exception: Not OK to use Qt
+ * 安装 xvfb
+ * 运行 xvfb-run -a ebook-convert recipe_file output_file
+ * cronjob
+{{{class="brush: bash"
+#!/bin/bash
+
+export LANG=en_US.UTF-8
+cd /usr/local/calibre
+xvfb-run ebook-convert \
+ /usr/local/calibre/MorningReading.recipe \
+ /usr/local/calibre/MorningReading.mobi \
+ --title "一天早知道" \
+ --authors "Andrew Lee" \
+ echo "Reading contents" | \
+ /usr/bin/mutt -s "Morning reading" \
+ -a /usr/local/calibre/MorningReading.mobi \
+ -- tinray1024@free.kindle.com
+  }}}
+

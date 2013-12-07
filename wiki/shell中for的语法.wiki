@@ -1,0 +1,9 @@
+{{{class="brush: bash"
+for ((i=0; i<=200; i++)); do
+	some script...
+done
+
+for i in data; do
+	some script...
+done
+}}}

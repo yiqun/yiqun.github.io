@@ -1,0 +1,5 @@
+{{{class="brush: bash"
+openssl req -x509 -nodes -days 365 -newkey \
+	rsa:1024 -keyout /etc/vsftpd/ssl/vsftpd.pem \
+    -out /etc/vsftpd/ssl/vsftpd.pem
+}}}

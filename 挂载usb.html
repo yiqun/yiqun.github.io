@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>%title%</title>
+		<title>挂载usb</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -39,12 +39,21 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">%title%</h4>
+			<h4 id="title">挂载usb</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
-					%content%
+					
+<pre class="brush: bash">
+sudo dmesg -c #清空硬件日志，插入usb
+sudo dmesg #查看usb设备名，如 sdc: sdc1
+sudo mkdir /media/usb
+sudo mount -t vfat /dev/sdc1 /media/usb
+#卸载 usb
+sudo umount /dev/sdc1
+</pre>
+
 				</div>
 			</div>
 		</div>

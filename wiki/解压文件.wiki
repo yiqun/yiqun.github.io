@@ -1,0 +1,10 @@
+- xz 文件
+{{{class="brush: bash"
+xz -d ***.tar.xz
+tar -xvf  ***.tar
+}}}
+- 解压 bz2 文件
+{{{class="brush: bash"
+bzip2 -d ***.bz2
+tar -xvf ***.tar
+}}}

@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>%title%</title>
+		<title>rsync范例</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -39,12 +39,32 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">%title%</h4>
+			<h4 id="title">rsync范例</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
-					%content%
+					
+<pre class="brush: bash">
+#/etc/rsyncd.conf
+uid=apache
+gid=apache
+strict modes=true
+port=29113
+logfile=/var/log/rsyncd.log
+pidfile=/var/run/rsyncd.pid
+max connections=100
+secrets file=/etc/rsyncd.secret
+auth users=andrew
+read only=no
+
+[project_name]
+path=/var/www/html/project_name
+
+#/etc/rsyncd.secret
+andrew:123456
+</pre>
+
 				</div>
 			</div>
 		</div>

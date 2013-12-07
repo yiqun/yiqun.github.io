@@ -1,0 +1,6 @@
+{{{class="brush: bash"
+#以管理员身份打开command
+C:\Windows\system32>takeown.exe /f "需要删除的目录或文件路径" -R
+C:\Windows\system32>icacls.exe "需要删除的目录或文件路径" /T /C /grant andrew:F
+}}}
+

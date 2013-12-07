@@ -1,0 +1,23 @@
+{{{class="brush: bash"
+echo "订阅内容" | mutt -s "晨读" -a ChenDu.mobi -- tinray1024@free.kindle.com
+}}}
+====错误====
+{{{
+postdrop:
+warning: uid=0: File too large
+sendmail: fatal: root(0): message file too big
+Error sending message, child exited 75 (Deferred.).
+Could not send the message.
+}}}
+方案：修改main.cf里面的message_size_limit参数，放大点，如果里面没有，自己手工加一个。单位是字节，如果不懂用法，man 5 postconf找到这个参数的说明
+====错误====
+{{{
+postfix/smtp[31702]: B5B5E5018E7: to=<tinray1024@free.kindle.com>,
+relay=smtp-fw-2101.amazon.com[72.21.196.25]:25, delay=1.7,
+delays=1.1/0.03/0.41/0.12, dsn=5.0.0, status=bounced (host
+smtp-fw-2101.amazon.com[72.21.196.25] said: 553 #5.1.8 Domain of
+sender address <root@mail.dianboom.fr> does not exist
+(in reply to MAIL FROM command))
+  }}}
+方案：修改/etc/postfix/main.cf，myhostname=www.timescode.com
+

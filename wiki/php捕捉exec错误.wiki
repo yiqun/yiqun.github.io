@@ -1,0 +1,4 @@
+{{{class="brush: php"
+$err = exec("命令 2>&1", $output);
+print_r($output);
+}}}

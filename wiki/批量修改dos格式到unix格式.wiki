@@ -1,0 +1,33 @@
+{{{class="brush: bash"
+#!/bin/bash
+if test "$1" = ""
+	then
+		echo "No convert source"
+		exit
+fi
+
+if [ ! -d $1 -a ! -f $1 ]
+	then
+		echo "Dir of file not exists"
+		exit
+fi
+
+rd()
+{
+	if [ -f $1 ]
+	   then
+		   /usr/bin/dos2unix $1
+	elif [ -d $1 ]
+	then
+		LS=`ls $1`
+		for i in $LS
+			do
+				CHILD="$1/$i"
+			rd $CHILD
+		done
+	else
+		echo "$1 not exists"
+	fi
+}
+rd $1
+}}}

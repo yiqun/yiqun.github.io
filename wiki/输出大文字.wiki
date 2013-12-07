@@ -1,0 +1,6 @@
+{{{class="brush: bash"
+apt-get update
+apt-get install toilet figlet
+figlet nixCraft
+}}}
+参考 http://www.cyberciti.biz/faq/create-large-colorful-text-banner-on-screen/ http://www.maketecheasier.com/figlet-and-toilet-asciify-your-text-art/

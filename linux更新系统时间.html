@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>%title%</title>
+		<title>linux更新系统时间</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -39,12 +39,27 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">%title%</h4>
+			<h4 id="title">linux更新系统时间</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
-					%content%
+					
+<ul>
+<li>
+安装 tzselect, ntpdate
+
+<li>
+执行 tzselect 选择时区
+
+<li>
+执行 ntpdate ntp.api.bz 同步时间
+
+<li>
+执行 hwclock -w --localtime 写入硬件时钟
+
+</ul>
+
 				</div>
 			</div>
 		</div>

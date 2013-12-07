@@ -1,0 +1,3 @@
+{{{class="brush: bash"
+free -m #查看swap是否挂载正确
+}}}

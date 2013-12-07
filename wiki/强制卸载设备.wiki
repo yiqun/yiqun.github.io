@@ -1,0 +1,5 @@
+{{{class="brush: bash"
+fuser -k -m -v mount_dir
+sleep 3
+umount -f mount_dir
+}}}

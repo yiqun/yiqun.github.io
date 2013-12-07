@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>%title%</title>
+		<title>calibre问题汇总</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -39,12 +39,44 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">%title%</h4>
+			<h4 id="title">calibre问题汇总</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
-					%content%
+					
+<ul>
+<li>
+ebook-convert时Exception: Not OK to use Qt
+
+<ul>
+<li>
+安装 xvfb
+
+<li>
+运行 xvfb-run -a ebook-convert recipe_file output_file
+
+<li>
+cronjob
+<pre class="brush: bash">
+#!/bin/bash
+
+export LANG=en_US.UTF-8
+cd /usr/local/calibre
+xvfb-run ebook-convert \
+ /usr/local/calibre/MorningReading.recipe \
+ /usr/local/calibre/MorningReading.mobi \
+ --title "一天早知道" \
+ --authors "Andrew Lee" \
+ echo "Reading contents" | \
+ /usr/bin/mutt -s "Morning reading" \
+ -a /usr/local/calibre/MorningReading.mobi \
+ -- tinray1024@free.kindle.com
+</pre>
+
+</ul>
+</ul>
+
 				</div>
 			</div>
 		</div>

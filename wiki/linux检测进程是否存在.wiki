@@ -1,0 +1,19 @@
+- 方法一:
+{{{class="brush: bash"
+if test $( pgrep -f "$1" | wc -l ) -eq 0
+	then
+		echo "进程不存在"
+else
+	echo "存在进程"
+fi
+}}}
+- 方法二:
+{{{class="brush: bash"
+PROCESS=`ps aux|grep "$1"|grep -v grep`
+if ["$PROCESS" == ""]
+	then
+		echo "进程不存在"
+else
+	echo "进程存在"
+fi
+}}}

@@ -1,0 +1,3 @@
+{{{class="brush: bash"
+cp -rv `ls -A | grep -vE "过滤列表"` target-dir
+}}}

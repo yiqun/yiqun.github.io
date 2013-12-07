@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>%title%</title>
+		<title>mutt通过postfix发送邮件</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -39,12 +39,39 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">%title%</h4>
+			<h4 id="title">mutt通过postfix发送邮件</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
-					%content%
+					
+<pre class="brush: bash">
+echo "订阅内容" | mutt -s "晨读" -a ChenDu.mobi -- tinray1024@free.kindle.com
+</pre>
+<h4 id="toc_0.0.0.1">错误</h4>
+<pre>
+postdrop:
+warning: uid=0: File too large
+sendmail: fatal: root(0): message file too big
+Error sending message, child exited 75 (Deferred.).
+Could not send the message.
+</pre>
+<p>
+方案：修改main.cf里面的message_size_limit参数，放大点，如果里面没有，自己手工加一个。单位是字节，如果不懂用法，man 5 postconf找到这个参数的说明
+</p>
+<h4 id="toc_0.0.0.2">错误</h4>
+<pre>
+postfix/smtp[31702]: B5B5E5018E7: to=&lt;tinray1024@free.kindle.com&gt;,
+relay=smtp-fw-2101.amazon.com[72.21.196.25]:25, delay=1.7,
+delays=1.1/0.03/0.41/0.12, dsn=5.0.0, status=bounced (host
+smtp-fw-2101.amazon.com[72.21.196.25] said: 553 #5.1.8 Domain of
+sender address &lt;root@mail.dianboom.fr&gt; does not exist
+(in reply to MAIL FROM command))
+</pre>
+<p>
+方案：修改/etc/postfix/main.cf，myhostname=www.timescode.com
+</p>
+
 				</div>
 			</div>
 		</div>

@@ -1,0 +1,11 @@
+- 在客户机(可以为任意机)创建rsa文件
+{{{class="brush: bash"
+ssh-keygen -t rsa
+#复制id_rsa与id_rsa.pub到需要登录服务器的机器,并设置sshd_config开通证书登录
+sftp -oPort=端口 username@server-ip
+}}}
+- 创建 secsh 文件
+{{{class="brush: bash"
+ssh-keygen -e -f ~/.ssh/id_rsa > file-name.secsh
+}}}
+

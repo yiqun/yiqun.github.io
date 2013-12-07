@@ -1,0 +1,9 @@
+/1Gb.file指优盘的1Gb.file
+{{{class="brush: bash"
+#纯写
+time dd if=/dev/zero bs=1024 count=1000000 of=/1Gb.file
+#纯读
+time dd if=/1Gb.file bs=64k |dd of=/dev/null
+#读写
+time dd if=/1Gb.file of=/data0/2.Gb.file bs=64k
+}}}

@@ -1,0 +1,8 @@
+{{{class="brush: bash"
+sudo dmesg -c #清空硬件日志，插入usb
+sudo dmesg #查看usb设备名，如 sdc: sdc1
+sudo mkdir /media/usb
+sudo mount -t vfat /dev/sdc1 /media/usb
+#卸载 usb
+sudo umount /dev/sdc1
+}}}

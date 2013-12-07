@@ -1,0 +1,7 @@
+{{{class="brush: bash"
+echo 'export REALLY_GEM_UPDATE_SYSTEM=1' >> ~/.bashrc
+. ~/.bashrc
+gem update --system # gem update --system version-number
+gem install rubygems-update
+}}}
+参考: http://www.admon.org/upgrade-and-downgrade-rubygems/

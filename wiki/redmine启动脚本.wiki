@@ -1,0 +1,51 @@
+{{{class="brush: bash"
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides:          redmine
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start and stop the redmine server daemon
+# Description:       Controls the main redmine server daemon "redmine"
+### END INIT INFO
+#
+set -u
+${DEBIAN_SCRIPT_DEBUG:+ set -v -x} 
+
+. /lib/lsb/init-functions
+
+#
+# main()
+#
+
+SELF=$(cd $(dirname $0); pwd -P)/$(basename $0)
+PROCESS=$(ps aux | grep 'ruby /usr/local/redmine-2.4.1/script/rails server webrick -e development' | grep -v 'grep' | awk '{print $2}')
+
+case "${1:-''}" in
+    'start')
+        echo "Starting redmine server"
+        if test "$PROCESS" = ""; then
+            ruby /usr/local/redmine-2.4.1/script/rails server webrick -e development 2>&1 > /dev/null &
+        fi  
+        echo -e "\033[32;49;1m [OK] \033[39;49;0m"
+        ;;  
+
+    'stop')
+        echo "Stoping redmine server"
+        if test "$PROCESS" != ""; then
+            kill -9 $PROCESS
+        fi  
+        echo -e "\033[32;49;1m [OK] \033[39;49;0m"
+        ;;  
+
+    'restart')
+        $SELF stop
+        $SELF start
+        ;;  
+
+    *)  
+        echo "Usage: $SELF start|stop|restart"
+        exit 1
+        ;;  
+esac
+}}}

@@ -1,0 +1,4 @@
+{{{class="brush: bash"
+	ionice -c 3 rm -rf dir_name
+}}}
+

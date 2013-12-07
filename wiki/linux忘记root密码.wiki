@@ -1,0 +1,8 @@
+Ubuntu
+{{{class="brush: bash"
+#编辑grub菜单，将
+ro quiet
+#改为
+rw nosplash init=/bin/bash
+}}}
+

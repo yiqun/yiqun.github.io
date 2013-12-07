@@ -1,0 +1,5 @@
+{{{class="brush: bash"
+echo -e "username\npassword" >> /etc/vsftpd/vsftpd_login
+db_load -T -t hash -f /etc/vsftpd/vsftpd_login /etc/vsftpd/vsftpd_login.db
+}}}
+

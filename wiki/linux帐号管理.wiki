@@ -1,0 +1,5 @@
+{{{class="brush: bash"
+usermod -l login-name old-name  #修改用户名
+usermod -u UID username #修改用户 ID
+groupmod -n new-name old-name #修改组名
+}}}

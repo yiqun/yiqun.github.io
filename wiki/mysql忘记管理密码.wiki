@@ -1,0 +1,10 @@
+{{{class="brush: bash"
+mysqld --skip-grant-tables &
+mysql
+>use mysql
+>UPDATE user SET password=password('PASSWORD_STRING') WHERE user='USER_NAME' AND host='HOST_NANE';
+>flush privileges;
+>exit;
+#kill mysqld
+#start mysqld
+}}}

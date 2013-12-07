@@ -1,0 +1,3 @@
+{{{class="brush: bash"
+su -s /bin/bash SPECIAL_ACCOUNT -c "SOME_SHELL_SCRIPT"
+}}}

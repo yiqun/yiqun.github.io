@@ -1,0 +1,27 @@
+- 没有选项名，按顺序读取
+ # $0: 命令名
+ # $1: 第一个参数
+ # $n: 第n个参数
+ # $#: 参数数量
+ # $@: 全部参数
+- 有选项名，使用getopts
+ # $OPTIND: 循环索引
+ # $OPTARG: 参数值
+ # $OPTERR: 错误信息
+- 用法：getopts :a:bc arg
+ # 第一个":"用于表示，当参数中出现多余的参数时，不报错，如果去掉，当某一参数没有设置默认处理，则报错：illegal option -- 参数名
+ # a: 表示参数a,其后面的":"代表该参数有值
+ # b与c分别代表-b -c参数
+ # arg为循环的参数名(如:a,b,c)，可以使用$arg引用
+- 实例(test.sh)：
+{{{class="brush: bash"
+while getopts a:bc arg
+	do
+		case $arg in
+			a) echo "这是 a，值为 $OPTARG";;
+			b) echo "这是 b，没有值的";;
+			c) echo "这是 c，也是没有值的";;
+		esac
+	done
+}}}
+命令： ./test.sh -a a的参数值 -bc

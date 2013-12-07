@@ -1,0 +1,3 @@
+{{{class="brush: bash"
+kill $(ps aux | grep '过滤字符串'| awk '{print $2}')
+}}}

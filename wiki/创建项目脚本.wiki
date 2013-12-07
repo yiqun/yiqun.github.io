@@ -1,0 +1,78 @@
+{{{class="brush: bash"
+#!/bin/bash
+##usage ./create -p PROJECT-NAME -w domain -u userA=rw -u userB=rw -u userC=r
+export LANG=zh_CN.UTF-8
+REPOS=""
+USEWEB=""
+USERS="apache=rw"
+SVN=/usr/bin/svn
+SVNADMIN=/usr/bin/svnadmin
+SVN_REPOS_BASE=/var/www/svn
+WEB_BASE=/var/www/html/sites
+
+while getopts p:w:u: arg
+	do
+		case $arg in
+			p)
+				REPOS=$OPTARG;;
+			w)
+				USEWEB=$OPTARG;;
+			u) 
+				USERS="$USERS $OPTARG";;
+		esac
+	done
+
+if test "$REPOS" = ""
+	then
+		echo "Empty project name, usage: -p PROJECT-NAME"
+		exit
+elif [ -d $REPOS ]
+	then
+		echo "Project exists"
+		exit
+fi
+
+if test "$USERS" = ""
+	then
+		echo "Empty project users, usage: -u user1=rw -u user2=r"
+fi
+
+REPOS_PATH=$SVN_REPOS_BASE/$REPOS
+WEB_PATH=$WEB_BASE/$REPOS
+
+#create
+`$SVNADMIN create $REPOS_PATH`
+
+#link configure
+rm -rf $REPOS_PATH/conf
+ln -s $SVN_REPOS_BASE/conf $REPOS_PATH/conf
+echo -e "\n" >> $SVN_REPOS_BASE/conf/authz
+echo "[$REPOS:/]" >> $SVN_REPOS_BASE/conf/authz
+
+for user in $USERS
+	do
+		echo $user >> $SVN_REPOS_BASE/conf/authz
+	done
+
+#use web
+if test "$USEWEB" != ""
+	then
+		echo -e "#!/bin/bash\n" > $REPOS_PATH/hooks/post-commit
+		echo "su -s /bin/bash apache -c \"export LANG=zh_CN.UTF-8 && $SVN up --no-auth-cache --username apache --password apache $WEB_PATH\"" \
+		>> $REPOS_PATH/hooks/post-commit
+		chmod +x $REPOS_PATH/hooks/post-commit
+		su -s /bin/bash apache -c "$SVN co --username apache --password apache svn://127.0.0.1/$REPOS $WEB_PATH"
+
+		#append vhost under ubuntu
+		echo -e "<VirtualHost *:80>\nDocumentRoot $WEB_PATH\nServerName $USEWEB\n<Directory $WEB_PATH>\nOptions Indexes FollowSymLinks MultiViews\nAllowOverride all\nDirectoryIndex index.html index.htm index.php\nOrder allow,deny\nallow from all\n</Directory>\nErrorLog \${APACHE_LOG_DIR}/$USEWEB-error.log\nLogLevel warn\nCustomLog \${APACHE_LOG_DIR}/$USEWEB-access.log combined\n</VirtualHost>" \
+		> /etc/apache2/sites-available/$USEWEB
+		ln -s /etc/apache2/sites-available/$USEWEB /etc/apache2/sites-enabled/$USEWEB
+		echo "127.0.0.1 $USEWEB" >> /etc/hosts
+		apachectl restart
+fi
+  }}}
+*使用方法*
+- 运行create-project.sh创建项目
+- 创建数据库
+- 上传代码，并修改数据库访问配置
+

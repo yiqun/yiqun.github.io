@@ -1,0 +1,4 @@
+- 安装 tzselect, ntpdate
+- 执行 tzselect 选择时区
+- 执行 ntpdate ntp.api.bz 同步时间
+- 执行 hwclock -w --localtime 写入硬件时钟
