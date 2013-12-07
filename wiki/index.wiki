@@ -1,0 +1,493 @@
+===删除win7残留的无权限文件@win8===
+{{{class="brush: bash"
+#以管理员身份打开command
+C:\Windows\system32>takeown.exe /f "需要删除的目录或文件路径" -R
+C:\Windows\system32>icacls.exe "需要删除的目录或文件路径" /T /C /grant andrew:F
+}}}
+===忘记root密码@ubuntu===
+{{{class="brush: bash"
+#编辑grub菜单，将
+ro quiet
+#改为
+rw nosplash init=/bin/bash
+}}}
+===创建虚拟帐号@vsftpd===
+{{{class="brush: bash"
+echo -e "username\npassword" >> /etc/vsftpd/vsftpd_login
+db_load -T -t hash -f /etc/vsftpd/vsftpd_login /etc/vsftpd/vsftpd_login.db
+}}}
+===以apache为运行帐号@vsftpd===
+{{{class="brush: bash"
+guest_username=apache
+}}}
+===帐号注册(免邮箱)@google ===
+https://accounts.google.com/SignUp?continue=https%3A%2F%2Faccounts.google.com%2FManageAccount
+===mutt通过postfix发送邮件@email===
+{{{class="brush: bash"
+echo "订阅内容" | mutt -s "晨读" -a ChenDu.mobi -- tinray1024@free.kindle.com
+}}}
+====错误====
+{{{
+postdrop:
+warning: uid=0: File too large
+sendmail: fatal: root(0): message file too big
+Error sending message, child exited 75 (Deferred.).
+Could not send the message.
+}}}
+方案：修改main.cf里面的message_size_limit参数，放大点，如果里面没有，自己手工加一个。单位是字节，如果不懂用法，man 5 postconf找到这个参数的说明
+====错误====
+{{{
+postfix/smtp[31702]: B5B5E5018E7: to=<tinray1024@free.kindle.com>,
+relay=smtp-fw-2101.amazon.com[72.21.196.25]:25, delay=1.7,
+delays=1.1/0.03/0.41/0.12, dsn=5.0.0, status=bounced (host
+smtp-fw-2101.amazon.com[72.21.196.25] said: 553 #5.1.8 Domain of
+sender address <root@mail.dianboom.fr> does not exist
+(in reply to MAIL FROM command))
+  }}}
+方案：修改/etc/postfix/main.cf，myhostname=www.timescode.com
+===问题汇总@calibre===
+- ebook-convert时Exception: Not OK to use Qt
+ * 安装 xvfb
+ * 运行 xvfb-run -a ebook-convert recipe_file output_file
+ * cronjob
+{{{class="brush: bash"
+#!/bin/bash
+
+export LANG=en_US.UTF-8
+cd /usr/local/calibre
+xvfb-run ebook-convert \
+ /usr/local/calibre/MorningReading.recipe \
+ /usr/local/calibre/MorningReading.mobi \
+ --title "一天早知道" \
+ --authors "Andrew Lee" \
+ echo "Reading contents" | \
+ /usr/bin/mutt -s "Morning reading" \
+ -a /usr/local/calibre/MorningReading.mobi \
+ -- tinray1024@free.kindle.com
+  }}}
+===忘记密码@mysql===
+{{{class="brush: bash"
+mysqld --skip-grant-tables &
+mysql
+>use mysql
+>UPDATE user SET password=password('PASSWORD_STRING') WHERE user='USER_NAME' AND host='HOST_NANE';
+>flush privileges;
+>exit;
+#kill mysqld
+#start mysqld
+  }}}
+===创建项目脚本(create-project.sh)@svn===
+{{{class="brush: bash"
+#!/bin/bash
+##usage ./create -p PROJECT-NAME -w domain -u userA=rw -u userB=rw -u userC=r
+export LANG=zh_CN.UTF-8
+REPOS=""
+USEWEB=false
+USERS="apache=rw"
+SVN=/usr/bin/svn
+SVNADMIN=/usr/bin/svnadmin
+SVN_REPOS_BASE=/var/www/svn
+WEB_BASE=/var/www/html/sites
+
+while getopts p:w:u: arg
+	do
+		case $arg in
+			p)
+				REPOS=$OPTARG;;
+			w)
+				USEWEB=$OPTARG;;
+			u) 
+				USERS="$USERS $OPTARG";;
+		esac
+	done
+
+if test "$REPOS" = ""
+	then
+		echo "Empty project name, usage: -p PROJECT-NAME"
+		exit
+elif [ -d $REPOS ]
+	then
+		echo "Project exists"
+		exit
+fi
+
+if test "$USERS" = ""
+	then
+		echo "Empty project users, usage: -u user1=rw -u user2=r"
+fi
+
+REPOS_PATH=$SVN_REPOS_BASE/$REPOS
+WEB_PATH=$WEB_BASE/$REPOS
+
+#create
+`$SVNADMIN create $REPOS_PATH`
+
+#link configure
+rm -rf $REPOS_PATH/conf
+ln -s $SVN_REPOS_BASE/conf $REPOS_PATH/conf
+echo -e "\n" >> $SVN_REPOS_BASE/conf/authz
+echo "[$REPOS:/]" >> $SVN_REPOS_BASE/conf/authz
+
+for user in $USERS
+	do
+		echo $user >> $SVN_REPOS_BASE/conf/authz
+	done
+
+#use web
+if [ $USEWEB ]
+	then
+		echo -e "#!/bin/bash\n" > $REPOS_PATH/hooks/post-commit
+		echo "su -s /bin/bash apache -c \"export LANG=zh_CN.UTF-8 && $SVN up --no-auth-cache --username apache --password apache $WEB_PATH\"" \
+		>> $REPOS_PATH/hooks/post-commit
+		chmod +x $REPOS_PATH/hooks/post-commit
+		su -s /bin/bash apache -c "$SVN co --username apache --password apache svn://127.0.0.1/$REPOS $WEB_PATH"
+
+		#append vhost under ubuntu
+		echo -e "<VirtualHost *:80>\nDocumentRoot $WEB_PATH\nServerName $USEWEB\n<Directory $WEB_PATH>\nOptions Indexes FollowSymLinks MultiViews\nAllowOverride all\nDirectoryIndex index.html index.htm index.php\nOrder allow,deny\nallow from all\n</Directory>\nErrorLog \${APACHE_LOG_DIR}/$USEWEB-error.log\nLogLevel warn\nCustomLog \${APACHE_LOG_DIR}/$USEWEB-access.log combined\n</VirtualHost>" \
+		> /etc/apache2/sites-available/$USEWEB
+		ln -s /etc/apache2/sites-available/$USEWEB /etc/apache2/sites-enabled/$USEWEB
+		echo "127.0.0.1 $USEWEB" >> /etc/hosts
+		apachectl restart
+fi
+  }}}
+*使用方法*
+- 运行create-project.sh创建项目
+- 创建数据库
+- 上传代码，并修改数据库访问配置
+===常用命令COMMAND@*nix===
+- 删除大目录
+{{{class="brush: bash"
+	ionice -c 3 rm -rf dir_name
+  }}}
+- 删除除指定文件外的文件
+{{{class="brush: bash"
+	find . -not -name "." -not -name "file_1_name" -not -name "file_2_name" | xargs rm -rf
+  }}}
+- 查找文件数量
+{{{class="brush: bash"
+	find . -type f | wc -l
+  }}}
+- 误删libc.so.6，
+ 误删除libc.so.6后的修复/lib/libc.so.6->libc-2.3.6.so(系统中本来的样子)，然后libc-2.3.6.so被误改名成了libc-2.3.6.so.bak，这时，系统中ls, mv ,ln 等等命令已经不能使用了
+ {{{class="brush: bash"
+	LD_PRELOAD=<real libc>
+    cd /lib
+	LD_PRELOAD=/lib/libc-2.3.6.so.bak
+    rm libc.so.6
+	LD_PRELOAD=/lib/libc-2.3.6.so.bak
+	ln -s /lib/libc-2.3.6.so.bak libc.so.6
+  }}}
+- 解压 xz 文件
+{{{class="brush: bash"
+	xz -d ***.tar.xz
+	tar -xvf  ***.tar
+  }}}
+- 解压 bz2 文件
+{{{class="brush: bash"
+	bzip2 -d ***.bz2
+	tar -xvf ***.tar
+  }}}
+- 挂载 usb
+{{{class="brush: bash"
+	sudo dmesg -c #清空硬件日志，插入usb
+	sudo dmesg #查看usb设备名，如 sdc: sdc1
+	sudo mkdir /media/usb
+	sudo mount -t vfat /dev/sdc1 /media/usb
+	#卸载 usb
+	sudo umount /dev/sdc1
+  }}}
+- 用户相关
+{{{class="brush: bash"
+	usermod -l login-name old-name  #修改用户名
+	usermod -u UID username #修改用户 ID
+	groupmod -n new-name old-name #修改组名
+  }}}
+- 更新系统时间
+{{{class="brush: bash"
+	ntpdate ntp.ubuntu.com
+  }}}
+- 强制卸载设备
+{{{class="brush: bash"
+fuser -k -m -v mount_dir
+sleep 3
+umount -f mount_dir
+  }}}
+- 生成pem
+{{{class="brush: bash"
+openssl req -x509 -nodes -days 365 -newkey \
+	rsa:1024 -keyout /etc/vsftpd/ssl/vsftpd.pem \
+    -out /etc/vsftpd/ssl/vsftpd.pem
+  }}}
+- swap未就绪错误
+{{{class="brush: bash"
+	free -m #查看swap是否挂载正确
+  }}}
+- 使用apache用户执行命令
+{{{class="brush: bash"
+	su -s /bin/bash apache -c "/var/www/html/cron/web"
+  }}}
+- 获取命令行参数
+ - 没有选项名，按顺序读取
+  # $0: 命令名
+  # $1: 第一个参数
+  # $n: 第n个参数
+  # $#: 参数数量
+  # $@: 全部参数
+ - 有选项名，使用getopts
+  # $OPTIND: 循环索引
+  # $OPTARG: 参数值
+  # $OPTERR: 错误信息
+ - 用法：getopts :a:bc arg
+  # 第一个":"用于表示，当参数中出现多余的参数时，不报错，如果去掉，当某一参数没有设置默认处理，则报错：illegal option -- 参数名
+  # a: 表示参数a,其后面的":"代表该参数有值
+  # b与c分别代表-b -c参数
+  # arg为循环的参数名(如:a,b,c)，可以使用$arg引用
+ - 实例(test.sh)：
+{{{class="brush: bash"
+	while getopts a:bc arg
+		do
+			case $arg in
+				a) echo "这是 a，值为 $OPTARG";;
+				b) echo "这是 b，没有值的";;
+				c) echo "这是 c，也是没有值的";;
+			esac
+		done
+  }}}
+  命令： ./test.sh -a a的参数值 -bc
+- for写法
+{{{class="brush: bash"
+	for ((i=0; i<=200; i++)); do
+	done
+		
+	for i in data; do
+	done
+  }}}
+- 换行符
+{{{class="brush: bash"
+	echo -e "a\nb"
+  }}}
+- Ctrl+Z后输入fg可恢复操作节目
+- 批量关闭进程
+{{{class="brush: bash"
+	kill $(ps aux | grep '过滤字符串'| awk '{print $2}')
+  }}}
+- SFTP无密码登录
+ - 在客户机(可以为任意机)创建rsa文件
+  {{{class="brush: bash"
+		ssh-keygen -t rsa
+		#复制id_rsa与id_rsa.pub到需要登录服务器的机器,并设置sshd_config开通证书登录
+		sftp -oPort=端口 username@server-ip
+	}}}
+ - 创建 secsh 文件
+  {{{class="brush: bash"
+		ssh-keygen -e -f ~/.ssh/id_rsa > MyerSftpServerForOMS-DEV.secsh
+	}}}
+- 检测进程是否存在
+ - 方法一:
+  {{{class="brush: bash"
+		if test $( pgrep -f "$1" | wc -l ) -eq 0
+			then
+				echo "进程不存在"
+		else
+			echo "存在进程"
+		fi
+	}}}
+ - 方法二:
+  {{{class="brush: bash"
+		PROCESS=`ps aux|grep "$1"|grep -v grep`
+		if ["$PROCESS" == ""]
+			then
+				echo "进程不存在"
+		else
+			echo "进程存在"
+		fi
+	}}}
+- 创建Apache SSL Key
+ {{{class="brush: bash"
+	   sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+		   -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt
+   }}}
+- 修改默认编辑器
+ {{{class="brush: bash"
+	   sudo update-alternatives --config editor
+   }}}
+- 列表过滤
+ {{{class="brush: bash"
+	   ls -A | grep -vE "过滤列表"
+   }}}
+- 拷贝过滤
+ {{{class="brush: bash"
+	   cp -rv `ls -A | grep -vE "过滤列表"` target-dir
+   }}}
+- debian `ll` 命令
+ {{{class="brush: bash"
+	#!/bin/bash
+	   
+	PATH="."
+	if test "$1" != ""; then
+		PATH="$1"
+	fi
+	/bin/ls -al $PATH
+   }}}
+- 输出大文字
+ {{{class="brush: bash"
+	apt-get update
+	apt-get install toilet figlet
+	figlet nixCraft
+   }}}
+ 参考 http://www.cyberciti.biz/faq/create-large-colorful-text-banner-on-screen/ http://www.maketecheasier.com/figlet-and-toilet-asciify-your-text-art/
+- 批量修改dos格式到unix格式
+ {{{class="brush: bash"
+	#!/bin/bash
+	if test "$1" = ""
+		then
+			echo "No convert source"
+			exit
+	fi
+	
+	if [ ! -d $1 -a ! -f $1 ]
+		then
+			echo "Dir of file not exists"
+			exit
+	fi
+	
+	rd()
+	{
+		if [ -f $1 ]
+		   then
+			   /usr/bin/dos2unix $1
+		elif [ -d $1 ]
+		then
+			LS=`ls $1`
+			for i in $LS
+				do
+					CHILD="$1/$i"
+				rd $CHILD
+			done
+		else
+			echo "$1 not exists"
+		fi
+	}
+	rd $1
+   }}}
+- 测试优盘读写速度(/1Gb.file指优盘的1Gb.file)
+ {{{class="brush: bash"
+	#纯写
+	time dd if=/dev/zero bs=1024 count=1000000 of=/1Gb.file
+	#纯读
+	time dd if=/1Gb.file bs=64k |dd of=/dev/null
+	#读写
+	time dd if=/1Gb.file of=/data0/2.Gb.file bs=64k
+   }}}
+- PHP启动服务
+ {{{class="brush: bash"
+	php -S localhost:80 -t htdocs
+   }}}
+- git删除子模块
+ {{{class="brush: bash"
+	git rm --cached path_to_submodule
+	rm -rf path_to_submodule
+	git commit -m "remove submodule"
+	git push
+   }}}
+===范例@rsync===
+{{{class="brush: bash"
+#/etc/rsyncd.conf
+    uid=apache
+    gid=apache
+    strict modes=true
+    port=29113
+    logfile=/var/log/rsyncd.log
+    pidfile=/var/run/rsyncd.pid
+    max connections=100
+    secrets file=/etc/rsyncd.secret
+    auth users=andrew
+    read only=no
+
+    [project_name]
+    path=/var/www/html/project_name
+
+#/etc/rsyncd.secret
+    andrew:123456
+  }}}
+===console.log颜色@js===
+{{{class="brush: jscript"
+console.log('%c Oh my heavens! ', 'background: #222; color: #bada55', 'more text');
+  }}}
+===捕捉exec错误@php===
+{{{class="brush: php"
+	$err = exec("命令 2>&1", $output);
+    print_r($output);
+  }}}
+===rubyGem降级@ruby&@debian===
+{{{class="brush: bash"
+	echo 'export REALLY_GEM_UPDATE_SYSTEM=1' >> ~/.bashrc
+	. ~/.bashrc
+	gem update --system # gem update --system version-number
+	gem install rubygems-update
+  }}}
+参考: http://www.admon.org/upgrade-and-downgrade-rubygems/
+===三星N9002刷Google服务@android===
+- 软件
+ - Odin3 3.07 http://pan.baidu.com/share/link?shareid=1109150573&uk=489934412
+ - cwm recovery http://pan.baidu.com/pcloud/album/info?uk=704970239&album_id=5100402027498447427
+ - Google包 http://pan.baidu.com/share/link?shareid=2333963048&uk=1764418763
+- 步骤
+ - 手机系统：设定->一般->安全性，取消“启用重新启动锁定”
+ - 手机系统：拷贝Google包至SDCard
+ - 按[Volume-]+Home+Power进入线刷模式
+ - PC：Odin刷cwm recovery
+ - 按[Volume+]+Home+Power进入Recovery模式
+ - 选择Google包，安装
+===启动脚本@redmine===
+{{{class="brush: bash"
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides:          redmine
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start and stop the redmine server daemon
+# Description:       Controls the main redmine server daemon "redmine"
+### END INIT INFO
+#
+set -u
+${DEBIAN_SCRIPT_DEBUG:+ set -v -x} 
+
+. /lib/lsb/init-functions
+
+#
+# main()
+#
+
+SELF=$(cd $(dirname $0); pwd -P)/$(basename $0)
+PROCESS=$(ps aux | grep 'ruby /usr/local/redmine-2.4.1/script/rails server webrick -e development' | grep -v 'grep' | awk '{print $2}')
+
+case "${1:-''}" in
+    'start')
+        echo "Starting redmine server"
+        if test "$PROCESS" = ""; then
+            ruby /usr/local/redmine-2.4.1/script/rails server webrick -e development 2>&1 > /dev/null &
+        fi  
+        echo -e "\033[32;49;1m [OK] \033[39;49;0m"
+        ;;  
+
+    'stop')
+        echo "Stoping redmine server"
+        if test "$PROCESS" != ""; then
+            kill -9 $PROCESS
+        fi  
+        echo -e "\033[32;49;1m [OK] \033[39;49;0m"
+        ;;  
+
+    'restart')
+        $SELF stop
+        $SELF start
+        ;;  
+
+    *)  
+        echo "Usage: $SELF start|stop|restart"
+        exit 1
+        ;;  
+esac
+}}}
