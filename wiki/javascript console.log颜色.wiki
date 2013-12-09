@@ -1,0 +1,3 @@
+{{{class="brush: jscript"
+console.log('%c Oh my heavens! ', 'background: #222; color: #bada55', 'more text');
+}}}
