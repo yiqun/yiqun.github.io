@@ -71,9 +71,40 @@
 					
 <pre class="brush: bash">
 echo -e "username\npassword" &gt;&gt; /etc/vsftpd/vsftpd_login
+
 db_load -T -t hash -f /etc/vsftpd/vsftpd_login /etc/vsftpd/vsftpd_login.db
 #debian7.0,使用db5.1_load代替db_load 
+
+#backup
+cp /etc/pam.d/vsftpd /etc/pam.d/vsftpd.bak
+
+echo -e "auth required pam_userdb.so db=/etc/vsftpd/vsftpd_login\naccount required pam_userdb.so db=/etc/vsftpd/vsftpd_login" &gt; /etc/pam.d/vsftpd
+
+echo "user_config_dir=/etc/vsftpd/vsftpd_user_conf" &gt;&gt; /etc/vsftpd/vsftpd.conf
+
+echo "write_enable=YES\nanon_world_readable_only=NO\nanon_upload_enable=YES\nanon_mkdir_write_enable=YES\nanon_other_write_enable=YES\nlocal_root=/home/vsftpd/username" \
+/etc/vsftpd/vsftpd_user_conf/username
 </pre>
+
+<ul>
+<li>
+E@debian7.0: refusing to run with writable root inside chroot()
+
+<ul>
+<li>
+wget <a href="http://ftp.us.debian.org/debian/pool/main/v/vsftpd/vsftpd_3.0.2-3_amd64.deb">http://ftp.us.debian.org/debian/pool/main/v/vsftpd/vsftpd_3.0.2-3_amd64.deb</a>
+
+<li>
+dpkg -i vsftpd_3.0.2-3_amd64.deb
+
+<li>
+echo "allow_writeable_chroot=YES" &gt;&gt; /etc/vsftpd.conf
+
+<li>
+echo "seccomp_sandbox=NO" &gt;&gt; /etc/vsftpd.conf
+
+</ul>
+</ul>
 
 				</div>
 			</div>
