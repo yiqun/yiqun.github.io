@@ -40,24 +40,20 @@
 					document.getElementsByTagName('head')[0].appendChild(s);
 					// google search
 					(function() {
-					 var cx = '013783129810095556381:ylgnf4tpsna';
-					 var gcse = document.createElement('script');
-					 gcse.type = 'text/javascript';
-					 gcse.async = true;
+					 var cx = '013783129810095556381:WMX1457836548';
+					 var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
 					 gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
 					 '//www.google.com/cse/cse.js?cx=' + cx;
-					 var s = document.getElementsByTagName('script')[0];
-					 s.parentNode.insertBefore(gcse, s);
+					 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
 					 })();
 					var dv = document.createElement('div');
 					dv.style.width = "600px";
 					dv.style.float = 'right';
 					dv.style.marginTop = '-10px';
 					dv.style.marginBottom = '10px';
-					var g = document.createElement('gcse:searchbox-only');
+					var g = document.createElement('gcse:searchresult-only');
 					dv.appendChild(g);
 					e.insertBefore(dv, e.firstChild);
-					//document.write('<gcse:searchbox-only></gcse:searchbox-only>');
 				}
 			};
 		</script> 
