@@ -4,6 +4,7 @@
 * [[以apache来运行vsftpd]]
 * [[mutt通过postfix发送邮件]]
 * [[免邮箱注册google帐号]]
+* [[添加google搜录]]
 * [[calibre问题汇总]]
 * [[mysql忘记管理密码]]
 * [[创建项目脚本]]
