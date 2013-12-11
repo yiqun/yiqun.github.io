@@ -1,4 +1,4 @@
-[[composer.json的psr一共有[0-3]个级别]]
+composer.json的psr一共有[0-3]个级别
 # 0-Autoloader standard
 # 1-Basic coding standard
 # 2-Coding style guide
