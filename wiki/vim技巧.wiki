@@ -1,0 +1,5 @@
+- 复制行，并追加到文件
+ Shift+j复制行
+ {{{class="brush:bash"
+	:'<,'>w! >>file.bak
+   }}}

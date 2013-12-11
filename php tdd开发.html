@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
-		<title>index</title>
+		<title>php tdd开发</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -63,158 +63,137 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">index</h4>
+			<h4 id="title">php tdd开发</h4>
 			<script type="text/javascript">onload();</script>
 			<hr>
 			<div id="content">
 				<div id="article">
 					
+<h5 id="toc_0.0.0.0.1">问题</h5>
 <ul>
 <li>
-<a href="删除win7残留的无权限文件.html">删除win7残留的无权限文件</a>
+全局变量，如<code>_SESSION</code>、<code>_COOKIE</code>、<code>_POST</code>、<code>_GET</code>等，若需完成测试，必须事先定义这些变量环境
 
 <li>
-<a href="linux忘记root密码.html">linux忘记root密码</a>
+数据库连接，如果环境有变化，如把MySQL换成Oracle之后，可能会出现隐藏的问题
 
 <li>
-<a href="创建vsftpd虚拟帐号.html">创建vsftpd虚拟帐号</a>
-
-<li>
-<a href="以apache来运行vsftpd.html">以apache来运行vsftpd</a>
-
-<li>
-<a href="mutt通过postfix发送邮件.html">mutt通过postfix发送邮件</a>
-
-<li>
-<a href="免邮箱注册google帐号.html">免邮箱注册google帐号</a>
-
-<li>
-<a href="calibre问题汇总.html">calibre问题汇总</a>
-
-<li>
-<a href="mysql忘记管理密码.html">mysql忘记管理密码</a>
-
-<li>
-<a href="创建项目脚本.html">创建项目脚本</a>
-
-<li>
-<a href="删除大目录.html">删除大目录</a>
-
-<li>
-<a href="删除除指定文件外的文件.html">删除除指定文件外的文件</a>
-
-<li>
-<a href="查找文件数量.html">查找文件数量</a>
-
-<li>
-<a href="误删libc.so.6.html">误删libc.so.6</a>
-
-<li>
-<a href="解压文件.html">解压文件</a>
-
-<li>
-<a href="挂载usb.html">挂载usb</a>
-
-<li>
-<a href="linux帐号管理.html">linux帐号管理</a>
-
-<li>
-<a href="linux更新系统时间.html">linux更新系统时间</a>
-
-<li>
-<a href="强制卸载设备.html">强制卸载设备</a>
-
-<li>
-<a href="openssl生成pem.html">openssl生成pem</a>
-
-<li>
-<a href="linux swap未就绪错误.html">linux swap未就绪错误</a>
-
-<li>
-<a href="使用指定帐号执行命令.html">使用指定帐号执行命令</a>
-
-<li>
-<a href="获取命令行参数.html">获取命令行参数</a>
-
-<li>
-<a href="shell中for的语法.html">shell中for的语法</a>
-
-<li>
-<a href="echo换行符.html">echo换行符</a>
-
-<li>
-<a href="linux按ctrl+z后恢复操作界面.html">linux按ctrl+z后恢复操作界面</a>
-
-<li>
-<a href="linux批量关闭进程.html">linux批量关闭进程</a>
-
-<li>
-<a href="linux无密码登陆.html">linux无密码登陆</a>
-
-<li>
-<a href="linux检测进程是否存在.html">linux检测进程是否存在</a>
-
-<li>
-<a href="创建apache ssl key.html">创建apache ssl key</a>
-
-<li>
-<a href="修改默认编辑器.html">修改默认编辑器</a>
-
-<li>
-<a href="ls列表过滤.html">ls列表过滤</a>
-
-<li>
-<a href="查找并删除.html">查找并删除</a>
-
-<li>
-<a href="拷贝过滤.html">拷贝过滤</a>
-
-<li>
-<a href="输出大文字.html">输出大文字</a>
-
-<li>
-<a href="批量修改dos格式到unix格式.html">批量修改dos格式到unix格式</a>
-
-<li>
-<a href="测试优盘读写速度.html">测试优盘读写速度</a>
-
-<li>
-<a href="php启动服务.html">php启动服务</a>
-
-<li>
-<a href="git删除子模块.html">git删除子模块</a>
-
-<li>
-<a href="rsync范例.html">rsync范例</a>
-
-<li>
-<a href="javascript console.log颜色.html">javascript console.log颜色</a>
-
-<li>
-<a href="php捕捉exec错误.html">php捕捉exec错误</a>
-
-<li>
-<a href="rubygem降级.html">rubygem降级</a>
-
-<li>
-<a href="三星N9002刷Google服务.html">三星N9002刷Google服务</a>
-
-<li>
-<a href="redmine启动脚本.html">redmine启动脚本</a>
-
-<li>
-<a href="javascript使用原生写法创建元素.html">javascript使用原生写法创建元素</a>
-
-<li>
-<a href="javascript添加style标签.html">javascript添加style标签</a>
-
-<li>
-<a href="vim技巧.html">vim技巧</a>
-
-<li>
-<a href="php tdd开发.html">php tdd开发</a>
+类引用，一般在控制器内部都需要事先初始化类，然后再引用，而当环境有变化，可能需要全部代码都修改一次
 
 </ul>
+
+<h5 id="toc_0.0.0.0.2">分析</h5>
+<ul>
+<li>
+可将引用全局变量的函数改成通过参数引用，这样可以通过改变参数来执行多次测试
+
+<li>
+可将类构造器改为引用数据库源来初始化数据库连接
+
+<li>
+可使用类似容器的东西来保存某一个类的初始化，然后控制器需要的地方调出来
+
+</ul>
+
+<h5 id="toc_0.0.0.0.3">解决</h5>
+<ul>
+<li>
+全局函数引用
+<pre class="brush:php">
+		// 原始代码
+		function getUserId()
+		{
+			return $_SESSION['userId'];
+		}
+
+		// 修正代码
+		function getUserId($session)
+		{
+			return $session['id'];
+		}
+</pre>
+
+<li>
+数据库连接
+<pre class="brush:php">
+		// 原始代码
+		class User {
+			public function getUserId()
+			{
+				return App::db-&gt;select('user')
+					-&gt;where('name', 'andrew')
+					-&gt;limit(1)
+					-&gt;field('user_id');
+			}
+		}
+		$user = new User();
+		print $user-&gt;getUserId();
+
+		// 修正代码
+		class User {
+			protected $_db;
+			public function __construct($db_connection)
+			{
+				$_db = $db_connection;
+			}
+			
+			public function getUserId()
+			{
+				return $db-&gt;select('user')
+					-&gt;where('name', 'andrew')
+					-&gt;limit(1)
+					-&gt;field('user_id');
+			}
+		}
+		// mock db
+		// $db = mock db ...
+		$user = new User($db);
+		print $user-&gt;getUserId();
+</pre>
+  PHPUnit可以使用mock来虚拟化数据库连接
+<pre class="brush:php">
+	protected function _mockDb()
+    {
+        // "Mock" (stub) database row result object
+        $returnResult = new StdClass();
+        $returnResult-&gt;id = 1;
+        $returnResult-&gt;username = 'fideloper';
+ 
+        // Mock database result object
+        $result = m::mock('DbResult');
+        $result-&gt;shouldReceive('num_results')-&gt;once()-&gt;andReturn( 1 );
+        $result-&gt;shouldReceive('row')-&gt;once()-&gt;andReturn( $returnResult );
+ 
+        // Mock database connection object
+        $db = m::mock('DbConnection');
+ 
+        $db-&gt;shouldReceive('select')-&gt;once()-&gt;andReturn( $db );
+        $db-&gt;shouldReceive('where')-&gt;once()-&gt;andReturn( $db );
+        $db-&gt;shouldReceive('limit')-&gt;once()-&gt;andReturn( $db );
+        $db-&gt;shouldReceive('get')-&gt;once()-&gt;andReturn( $result );
+ 
+        return $db;
+    }
+</pre>
+
+<li>
+类引用，使用symfony团队sensiolabs开发的<a href="http://pimple.sensiolabs.org/">http://pimple.sensiolabs.org/</a>
+<pre class="brush:php">
+	// 公共文件
+	require_once '/path/to/Pimple.php';
+	$container = new Pimple();
+	$container['user'] = function() {
+		return new User($db);
+	}
+	// 控制器文件
+	print $container['user']-&gt;getUserId();
+</pre>
+
+</ul>
+<h5 id="toc_0.0.0.0.4">总结</h5>
+<p>
+在开发过程中，QA的控制需要严格谨慎，所以免不了测试，为了方便测试，必须规范化开发，尽量避免因为环境和参数引起的潜在问题，因此，将环境和变量独立出来，是必不可少的。另外，如果需要强制输入，可以这么做：定义接口，引用类继承接口，控制器传参强制类型
+</p>
 
 				</div>
 			</div>

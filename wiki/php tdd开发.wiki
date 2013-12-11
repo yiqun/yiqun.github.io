@@ -1,0 +1,99 @@
+=====问题=====
+* 全局变量，如`_SESSION`、`_COOKIE`、`_POST`、`_GET`等，若需完成测试，必须事先定义这些变量环境
+* 数据库连接，如果环境有变化，如把MySQL换成Oracle之后，可能会出现隐藏的问题
+* 类引用，一般在控制器内部都需要事先初始化类，然后再引用，而当环境有变化，可能需要全部代码都修改一次
+
+=====分析=====
+* 可将引用全局变量的函数改成通过参数引用，这样可以通过改变参数来执行多次测试
+* 可将类构造器改为引用数据库源来初始化数据库连接
+* 可使用类似容器的东西来保存某一个类的初始化，然后控制器需要的地方调出来
+
+=====解决=====
+* 全局函数引用
+  {{{class="brush:php"
+		// 原始代码
+		function getUserId()
+		{
+			return $_SESSION['userId'];
+		}
+
+		// 修正代码
+		function getUserId($session)
+		{
+			return $session['id'];
+		}
+	}}}
+* 数据库连接
+  {{{class="brush:php"
+		// 原始代码
+		class User {
+			public function getUserId()
+			{
+				return App::db->select('user')
+					->where('name', 'andrew')
+					->limit(1)
+					->field('user_id');
+			}
+		}
+		$user = new User();
+		print $user->getUserId();
+
+		// 修正代码
+		class User {
+			protected $_db;
+			public function __construct($db_connection)
+			{
+				$_db = $db_connection;
+			}
+			
+			public function getUserId()
+			{
+				return $db->select('user')
+					->where('name', 'andrew')
+					->limit(1)
+					->field('user_id');
+			}
+		}
+		// mock db
+		// $db = mock db ...
+		$user = new User($db);
+		print $user->getUserId();
+	}}}
+  PHPUnit可以使用mock来虚拟化数据库连接
+  {{{class="brush:php"
+	protected function _mockDb()
+    {
+        // "Mock" (stub) database row result object
+        $returnResult = new StdClass();
+        $returnResult->id = 1;
+        $returnResult->username = 'fideloper';
+ 
+        // Mock database result object
+        $result = m::mock('DbResult');
+        $result->shouldReceive('num_results')->once()->andReturn( 1 );
+        $result->shouldReceive('row')->once()->andReturn( $returnResult );
+ 
+        // Mock database connection object
+        $db = m::mock('DbConnection');
+ 
+        $db->shouldReceive('select')->once()->andReturn( $db );
+        $db->shouldReceive('where')->once()->andReturn( $db );
+        $db->shouldReceive('limit')->once()->andReturn( $db );
+        $db->shouldReceive('get')->once()->andReturn( $result );
+ 
+        return $db;
+    }
+    }}}
+* 类引用，使用symfony团队sensiolabs开发的http://pimple.sensiolabs.org/
+  {{{class="brush:php"
+	// 公共文件
+	require_once '/path/to/Pimple.php';
+	$container = new Pimple();
+	$container['user'] = function() {
+		return new User($db);
+	}
+	// 控制器文件
+	print $container['user']->getUserId();
+	}}}
+=====总结=====
+在开发过程中，QA的控制需要严格谨慎，所以免不了测试，为了方便测试，必须规范化开发，尽量避免因为环境和参数引起的潜在问题，因此，将环境和变量独立出来，是必不可少的。另外，如果需要强制输入，可以这么做：定义接口，引用类继承接口，控制器传参强制类型
