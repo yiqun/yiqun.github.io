@@ -1,4 +1,4 @@
-* [[服务器安装Vitualbox(无GUI)]]
+* [[服务器安装Virtualbox(无GUI)]]
 * [[查看*nix系统版本]]
 * [[低端VPS]]
 * [[php composer psr]]
