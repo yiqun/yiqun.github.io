@@ -1,0 +1,6 @@
+复制文件
+{{{class="brush:bash"
+	cp file-name{,.orgin}
+	#等效于
+	cp file-name file-name.orgin
+  }}}

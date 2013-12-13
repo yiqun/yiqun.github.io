@@ -1,3 +1,5 @@
+* [[centos JAVA_HOME]]
+* [[不明其义的命令]]
 * [[服务器安装Virtualbox(无GUI)]]
 * [[查看*nix系统版本]]
 * [[低端VPS]]
