@@ -34,6 +34,7 @@
 					e.insertBefore(c, e.firstChild);
 				} else {
 					e.innerHTML = document.title = '逸群技术拾遗录';
+					// google customer search
 					var s = document.createElement('style');
 					s.type = 'text/css';
 					s.appendChild(document.createTextNode('.gsc-search-box{margin:0!important;padding:0!important}#wrap>#content>#article>ul>li{display:inline-block;width:33%;}'));
@@ -42,21 +43,14 @@
 					dv.style.float = 'right';
 					dv.style.marginTop = '-10px';
 					dv.style.marginBottom = '10px';
-					// search
-					var g = document.createElement('gcse:searchbox-only');
+					g = document.createElement('gcse:searchbox-only');
 					dv.appendChild(g);
 					e.insertBefore(dv, e.firstChild);
 					document.getElementsByTagName('head')[0].appendChild(s);
 					if (-1 != location.href.indexOf('?q=')) {
-					var dv = document.createElement('div');
-					dv.style.width = "600px";
-					dv.style.float = 'right';
-					dv.style.marginTop = '-10px';
-					dv.style.marginBottom = '10px';
-var g = document.createelement('gcse:searchresult-only');
-					dv.appendchild(g);
-					var b = document.getElementsByTagName('body');
-					b.insertbefore(dv, e.firstchild);
+						g = document.createElement('gcse:searchresult-only');
+						var b = document.getElementById('wrap');
+						b.appendChild(g);
 					}
 					(function() {
 					 var cx = '013783129810095556381:WMX1457836548';
@@ -75,8 +69,8 @@ var g = document.createelement('gcse:searchresult-only');
 	<body>
 		<div id="wrap">
 			<h4 id="title">ls列表过滤</h4>
-			<script type="text/javascript">onload();</script>
 			<hr>
+			<script type="text/javascript">onload();</script>
 			<div id="content">
 				<div id="article">
 					
