@@ -19,7 +19,7 @@
 			SyntaxHighlighter.all();
 			function onload(){
 				var e = document.getElementById('title');
-				if ('/' != location.href.substr(-1) && -1 == location.href.indexOf('index.html')) {
+				if ('/' != location.href.substr(-1) && -1 == location.href.indexOf('?q=') && -1 == location.href.indexOf('index.html')) {
 					var e = document.getElementById('title');
 					var c = document.createElement('a');
 					c.href = '#';
@@ -37,23 +37,37 @@
 					var s = document.createElement('style');
 					s.type = 'text/css';
 					s.appendChild(document.createTextNode('.gsc-search-box{margin:0!important;padding:0!important}#wrap>#content>#article>ul>li{display:inline-block;width:33%;}'));
-					document.getElementsByTagName('head')[0].appendChild(s);
-					// google search
-					(function() {
-					 var cx = '013783129810095556381:WMX1457836548';
-					 var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
-					 gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-					 '//www.google.com/cse/cse.js?cx=' + cx;
-					 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
-					 })();
 					var dv = document.createElement('div');
 					dv.style.width = "600px";
 					dv.style.float = 'right';
 					dv.style.marginTop = '-10px';
 					dv.style.marginBottom = '10px';
-					var g = document.createElement('gcse:searchresult-only');
+					// search
+					var g = document.createElement('gcse:searchbox-only');
 					dv.appendChild(g);
 					e.insertBefore(dv, e.firstChild);
+					document.getElementsByTagName('head')[0].appendChild(s);
+					if (-1 != location.href.indexOf('?q=')) {
+					var dv = document.createElement('div');
+					dv.style.width = "600px";
+					dv.style.float = 'right';
+					dv.style.marginTop = '-10px';
+					dv.style.marginBottom = '10px';
+var g = document.createelement('gcse:searchresult-only');
+					dv.appendchild(g);
+					var b = document.getElementsByTagName('body');
+					b.insertbefore(dv, e.firstchild);
+					}
+					(function() {
+					 var cx = '013783129810095556381:WMX1457836548';
+					 var gcse = document.createElement('script');
+					 gcse.type = 'text/javascript';
+					 gcse.async = true;
+					 gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+					 '//www.google.com/cse/cse.js?cx=' + cx;
+					 var s = document.getElementsByTagName('script')[0];
+					 s.parentNode.insertBefore(gcse, s);
+					 })();
 				}
 			};
 		</script> 
