@@ -1,0 +1,4 @@
+{{{
+wmic memphysical get maxcapacity
+}}}
+以上得出的数字/1024/1024即得出G数
