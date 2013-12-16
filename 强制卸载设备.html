@@ -19,7 +19,7 @@
 			SyntaxHighlighter.all();
 			function onload(){
 				var e = document.getElementById('title');
-				if ('/' != location.href.substr(-1) && -1 == location.href.indexOf('index.html')) {
+				if ('/' != location.href.substr(-1) && -1 == location.href.indexOf('?q=') && -1 == location.href.indexOf('index.html')) {
 					var e = document.getElementById('title');
 					var c = document.createElement('a');
 					c.href = '#';
@@ -34,26 +34,33 @@
 					e.insertBefore(c, e.firstChild);
 				} else {
 					e.innerHTML = document.title = '逸群技术拾遗录';
-					var s = document.createElement('style');
+					var s,dv,g,b;
+					// google customer search
+					s = document.createElement('style');
 					s.type = 'text/css';
-					s.appendChild(document.createTextNode('.gsc-search-box{margin:0!important;padding:0!important}#wrap>#content>#article>ul>li{display:inline-block;width:33%;}'));
-					document.getElementsByTagName('head')[0].appendChild(s);
-					// google search
-					(function() {
-					 var cx = '013783129810095556381:WMX1457836548';
-					 var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
-					 gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-					 '//www.google.com/cse/cse.js?cx=' + cx;
-					 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
-					 })();
-					var dv = document.createElement('div');
+					s.appendChild(document.createTextNode('.gsc-control-wrapper-cse form.gsc-search-box{padding:0;margin:0}'
+								+'div.gsc-control-cse.gsc-control-cse-zh_CN{padding:0}'
+								+'#wrap>#content>#article>ul>li{display:inline-block;width:33%;}'));
+					dv = document.createElement('div');
 					dv.style.width = "600px";
 					dv.style.float = 'right';
-					dv.style.marginTop = '-10px';
-					dv.style.marginBottom = '10px';
-					var g = document.createElement('gcse:searchresult-only');
+					dv.style.marginTop = '-30px';
+					dv.style.marginBottom = 0;
+					//g = document.createElement('gcse:searchbox-only');
+					g = document.createElement('gcse:search');
 					dv.appendChild(g);
 					e.insertBefore(dv, e.firstChild);
+					document.getElementsByTagName('head')[0].appendChild(s);
+					(function() {
+					 var cx = '013783129810095556381:WMX1457836548';
+					 var gcse = document.createElement('script');
+					 gcse.type = 'text/javascript';
+					 gcse.async = true;
+					 gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+					 '//www.google.com/cse/cse.js?cx=' + cx;
+					 var s = document.getElementsByTagName('script')[0];
+					 s.parentNode.insertBefore(gcse, s);
+					 })();
 				}
 			};
 		</script> 
@@ -61,8 +68,8 @@
 	<body>
 		<div id="wrap">
 			<h4 id="title">强制卸载设备</h4>
-			<script type="text/javascript">onload();</script>
 			<hr>
+			<script type="text/javascript">onload();</script>
 			<div id="content">
 				<div id="article">
 					
