@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+		<meta name="google-site-verification" content="ZHIKwo-o2HQJwtZ9Bt_S8Yt7_rq7ECBEM7HMEToXBck" />
+		<title>不明其义的命令</title>
+		<link type="text/css" rel="stylesheet" href="style.css" /> 
+		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
+		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
+		<link type="text/css" rel="stylesheet" href="static/css/shThemeDefault.css" /> 
+		<script type="text/javascript" src="static/js/shCore.js"></script> 
+		<script type="text/javascript" src="static/js/shBrushPhp.js"></script>
+		<script type="text/javascript" src="static/js/shBrushJScript.js"></script>
+		<script type="text/javascript" src="static/js/shBrushCss.js"></script>
+		<script type="text/javascript" src="static/js/shBrushBash.js"></script>
+		<script type="text/javascript" src="static/js/shBrushSql.js"></script>
+		<script type="text/javascript">
+			SyntaxHighlighter.all();
+			function onload(){
+				var e = document.getElementById('title');
+				if ('/' != location.href.substr(-1) && -1 == location.href.indexOf('?q=') && -1 == location.href.indexOf('index.html')) {
+					var e = document.getElementById('title');
+					var c = document.createElement('a');
+					c.href = '#';
+					c.onclick = function(e){
+						e.preventDefault();
+						history.back(-1);
+					};
+					c.style.float = 'right';
+					c.style.fontSize = '14px';
+					c.style.fontWeight = 'normal';
+					c.innerHTML = '&lt;返回';
+					e.insertBefore(c, e.firstChild);
+				} else {
+					e.innerHTML = document.title = '逸群技术拾遗录';
+					var s,dv,g,b;
+					// google customer search
+					s = document.createElement('style');
+					s.type = 'text/css';
+					s.appendChild(document.createTextNode('.gsc-control-wrapper-cse form.gsc-search-box{padding:0;margin:0}'
+								+'div.gsc-control-cse.gsc-control-cse-zh_CN{padding:0}'
+								+'#wrap>#content>#article>ul>li{display:inline-block;width:33%;}'));
+					dv = document.createElement('div');
+					dv.style.width = "600px";
+					dv.style.float = 'right';
+					dv.style.marginTop = '-30px';
+					dv.style.marginBottom = 0;
+					//g = document.createElement('gcse:searchbox-only');
+					g = document.createElement('gcse:search');
+					dv.appendChild(g);
+					e.insertBefore(dv, e.firstChild);
+					document.getElementsByTagName('head')[0].appendChild(s);
+					(function() {
+					 var cx = '013783129810095556381:WMX1457836548';
+					 var gcse = document.createElement('script');
+					 gcse.type = 'text/javascript';
+					 gcse.async = true;
+					 gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+					 '//www.google.com/cse/cse.js?cx=' + cx;
+					 var s = document.getElementsByTagName('script')[0];
+					 s.parentNode.insertBefore(gcse, s);
+					 })();
+				}
+			};
+		</script> 
+	</head>
+	<body>
+		<div id="wrap">
+			<h4 id="title">不明其义的命令</h4>
+			<hr>
+			<script type="text/javascript">onload();</script>
+			<div id="content">
+				<div id="article">
+					
+<p>
+复制文件
+</p>
+<pre class="brush:bash">
+	cp file-name{,.orgin}
+	#等效于
+	cp file-name file-name.orgin
+</pre>
+
+				</div>
+			</div>
+			<hr>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+			/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+			var disqus_shortname = 'yiqungithubio'; // required: replace example with your forum shortname
+
+			/* * * DON'T EDIT BELOW THIS LINE * * */
+			(function() {
+				 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				 dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+				 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			 })();
+			</script>
+			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		</div>
+	</body>
+</html>

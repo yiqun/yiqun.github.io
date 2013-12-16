@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
 		<meta name="google-site-verification" content="ZHIKwo-o2HQJwtZ9Bt_S8Yt7_rq7ECBEM7HMEToXBck" />
-		<title>index</title>
+		<title>服务器安装Virtualbox(无GUI)</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -67,181 +67,89 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">index</h4>
+			<h4 id="title">服务器安装Virtualbox(无GUI)</h4>
 			<hr>
 			<script type="text/javascript">onload();</script>
 			<div id="content">
 				<div id="article">
 					
+<p>
+此为<code>debian</code>环境
+</p>
 <ul>
 <li>
-<a href="centos JAVA_HOME.html">centos JAVA_HOME</a>
+下载并安装virtualbox安装包
+<pre class="brush:bash">
+	wget http://download.virtualbox.org/virtualbox/4.3.4/virtualbox-4.3_4.3.4-91027~Debian~wheezy_amd64.deb
+	dpkg -i virtualbox-4.3_4.3.4-91027~Debian~wheezy_amd64.deb
+	#如有依赖的包没安装,可使用apt-get安装
+</pre>
 
 <li>
-<a href="不明其义的命令.html">不明其义的命令</a>
+下载并安装扩展(其中VRDE用于远程桌面)
+<pre class="brush:bash">
+	wget http://download.virtualbox.org/virtualbox/4.3.4/Oracle_VM_VirtualBox_Extension_Pack-4.3.4.vbox-extpack
+	VBoxManage extpack install Oracle_VM_VirtualBox_Extension_Pack-4.3.4.vbox-extpack 
+</pre>
 
 <li>
-<a href="服务器安装Virtualbox(无GUI).html">服务器安装Virtualbox(无GUI)</a>
+创建虚拟机
+<pre class="brush:bash">
+	VBoxManage createvm --name CentOS-clean --register
+	VBoxManage modifyvm CentOS-clean --memory 512 --acpi on --boot1 dvd
+	VBoxManage modifyvm CentOS-clean --nic1 bridged --bridgeadapter1 eth0
+	VBoxManage modifyvm CentOS-clean --ostype Linux_64
+</pre>
 
 <li>
-<<<<<<< HEAD
-<a href="查看*nix系统版本.html">查看*nix系统版本</a>
-=======
-<a href="查看系统版本.html">查看系统版本</a>
->>>>>>> 4bc9a3dc4f7d4fc5b15f5fbfbf220f9192607b3c
+设置虚拟机
+<pre class="brush:bash">
+	VBoxManage createhd --filename /root/VirtualBox\ VMs/CentOS-clean/ide.vdi --size 10000
+	VBoxManage storagectl CentOS-clean --name "IDE Controller" --add ide
+
+	VBoxManage storageattach CentOS-clean --storagectl "IDE Controller"  \
+		--port 0 --device 0 --type hdd --medium /root/VirtualBox\ VMs/CentOS-clean/ide.vdi
+
+	VBoxManage storageattach CentOS-clean --storagectl "IDE Controller" \
+		--port 1 --device 0 --type dvddrive --medium /root/isos/CentOS-6.5-x86_64-minimal.iso
+</pre>
 
 <li>
-<a href="低端VPS.html">低端VPS</a>
+启动虚拟机
+<pre class="brush:bash">
+	VBoxHeadless --startvm CentOS-clean &amp;
+</pre>
+ 现在可以通过mstsc连接服务器ip进行虚拟机的系统安装了
 
 <li>
-<a href="php composer psr.html">php composer psr</a>
+关闭虚拟机
+<pre class="brush:bash">
+	VBoxManage controlvm CentOS-clean poweroff
+</pre>
 
 <li>
-<a href="删除win7残留的无权限文件.html">删除win7残留的无权限文件</a>
+安装好系统后，可以将光驱删掉
+<pre class="brush:bash">
+	VBoxManage modifyvm CentOS-clean --dvd none
+</pre>
 
 <li>
-<a href="linux忘记root密码.html">linux忘记root密码</a>
+无远程桌面启动
+<pre class="brush:bash">
+	VBoxHeadless --startvm CentOS-clean --vrde off &amp;
+</pre>
 
 <li>
-<a href="创建vsftpd虚拟帐号.html">创建vsftpd虚拟帐号</a>
-
-<li>
-<a href="以apache来运行vsftpd.html">以apache来运行vsftpd</a>
-
-<li>
-<a href="mutt通过postfix发送邮件.html">mutt通过postfix发送邮件</a>
-
-<li>
-<a href="免邮箱注册google帐号.html">免邮箱注册google帐号</a>
-
-<li>
-<a href="添加google搜录.html">添加google搜录</a>
-
-<li>
-<a href="calibre问题汇总.html">calibre问题汇总</a>
-
-<li>
-<a href="mysql忘记管理密码.html">mysql忘记管理密码</a>
-
-<li>
-<a href="创建项目脚本.html">创建项目脚本</a>
-
-<li>
-<a href="删除大目录.html">删除大目录</a>
-
-<li>
-<a href="删除除指定文件外的文件.html">删除除指定文件外的文件</a>
-
-<li>
-<a href="查找文件数量.html">查找文件数量</a>
-
-<li>
-<a href="误删libc.so.6.html">误删libc.so.6</a>
-
-<li>
-<a href="解压文件.html">解压文件</a>
-
-<li>
-<a href="挂载usb.html">挂载usb</a>
-
-<li>
-<a href="linux帐号管理.html">linux帐号管理</a>
-
-<li>
-<a href="linux更新系统时间.html">linux更新系统时间</a>
-
-<li>
-<a href="强制卸载设备.html">强制卸载设备</a>
-
-<li>
-<a href="openssl生成pem.html">openssl生成pem</a>
-
-<li>
-<a href="linux swap未就绪错误.html">linux swap未就绪错误</a>
-
-<li>
-<a href="使用指定帐号执行命令.html">使用指定帐号执行命令</a>
-
-<li>
-<a href="获取命令行参数.html">获取命令行参数</a>
-
-<li>
-<a href="shell中for的语法.html">shell中for的语法</a>
-
-<li>
-<a href="echo换行符.html">echo换行符</a>
-
-<li>
-<a href="linux按ctrl+z后恢复操作界面.html">linux按ctrl+z后恢复操作界面</a>
-
-<li>
-<a href="linux批量关闭进程.html">linux批量关闭进程</a>
-
-<li>
-<a href="linux无密码登陆.html">linux无密码登陆</a>
-
-<li>
-<a href="linux检测进程是否存在.html">linux检测进程是否存在</a>
-
-<li>
-<a href="创建apache ssl key.html">创建apache ssl key</a>
-
-<li>
-<a href="修改默认编辑器.html">修改默认编辑器</a>
-
-<li>
-<a href="ls列表过滤.html">ls列表过滤</a>
-
-<li>
-<a href="查找并删除.html">查找并删除</a>
-
-<li>
-<a href="拷贝过滤.html">拷贝过滤</a>
-
-<li>
-<a href="输出大文字.html">输出大文字</a>
-
-<li>
-<a href="批量修改dos格式到unix格式.html">批量修改dos格式到unix格式</a>
-
-<li>
-<a href="测试优盘读写速度.html">测试优盘读写速度</a>
-
-<li>
-<a href="php启动服务.html">php启动服务</a>
-
-<li>
-<a href="git删除子模块.html">git删除子模块</a>
-
-<li>
-<a href="rsync范例.html">rsync范例</a>
-
-<li>
-<a href="javascript console.log颜色.html">javascript console.log颜色</a>
-
-<li>
-<a href="php捕捉exec错误.html">php捕捉exec错误</a>
-
-<li>
-<a href="rubygem降级.html">rubygem降级</a>
-
-<li>
-<a href="三星N9002刷Google服务.html">三星N9002刷Google服务</a>
-
-<li>
-<a href="redmine启动脚本.html">redmine启动脚本</a>
-
-<li>
-<a href="javascript使用原生写法创建元素.html">javascript使用原生写法创建元素</a>
-
-<li>
-<a href="javascript添加style标签.html">javascript添加style标签</a>
-
-<li>
-<a href="vim技巧.html">vim技巧</a>
-
-<li>
-<a href="php tdd开发.html">php tdd开发</a>
+挂在驱动光盘
+<pre class="brush:bash">
+	VBoxManage storageattach CentOS-clean --storagectl "IDE Controller" \
+		--port 1 --device 0 --type hdd --medium /usr/share/virtualbox/VBoxGuestAdditions.iso
+	# 在虚拟机操作
+	mkdir /mnt/dvd
+	mount -t iso9660 -o ro /dev/dvd /mnt/dvd
+	cd /mnt/dvd
+	./VBoxLinuxAdditions.run
+</pre>
 
 </ul>
 
