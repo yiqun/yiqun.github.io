@@ -1,0 +1,9 @@
+- 新建磁盘（希望最大值)
+- 挂载gparted iso文件
+- 设置cd启动
+- 复制旧磁盘，粘贴到新磁盘，并设置可启动
+- 关闭vbox
+- 删除旧磁盘
+- 设置为磁盘启动
+
+参考：http://www.my-guides.net/en/guides/general-software/how-to-resize-a-virtualbox-disk-partition

@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+		<meta name="google-site-verification" content="ZHIKwo-o2HQJwtZ9Bt_S8Yt7_rq7ECBEM7HMEToXBck" />
+		<title>centos搭建php ci环境(基于ant)</title>
+		<link type="text/css" rel="stylesheet" href="style.css" /> 
+		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
+		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
+		<link type="text/css" rel="stylesheet" href="static/css/shThemeDefault.css" /> 
+		<script type="text/javascript" src="static/js/shCore.js"></script> 
+		<script type="text/javascript" src="static/js/shBrushPhp.js"></script>
+		<script type="text/javascript" src="static/js/shBrushXml.js"></script>
+		<script type="text/javascript" src="static/js/shBrushPlain.js"></script>
+		<script type="text/javascript" src="static/js/shBrushJScript.js"></script>
+		<script type="text/javascript" src="static/js/shBrushCss.js"></script>
+		<script type="text/javascript" src="static/js/shBrushBash.js"></script>
+		<script type="text/javascript" src="static/js/shBrushSql.js"></script>
+		<script type="text/javascript">
+			SyntaxHighlighter.all();
+			function onload(){
+				var e = document.getElementById('title');
+				if ('/' != location.href.substr(-1) && -1 == location.href.indexOf('?q=') && -1 == location.href.indexOf('index.html')) {
+					var e = document.getElementById('title');
+					var c = document.createElement('a');
+					c.href = '#';
+					c.onclick = function(e){
+						e.preventDefault();
+						history.back(-1);
+					};
+					c.style.float = 'right';
+					c.style.fontSize = '14px';
+					c.style.fontWeight = 'normal';
+					c.innerHTML = '&lt;返回';
+					e.insertBefore(c, e.firstChild);
+				} else {
+					e.innerHTML = document.title = '逸群技术拾遗录';
+					var s,dv,g,b;
+					// google customer search
+					s = document.createElement('style');
+					s.type = 'text/css';
+					s.appendChild(document.createTextNode('.gsc-control-wrapper-cse form.gsc-search-box{padding:0;margin:0}'
+								+'div.gsc-control-cse.gsc-control-cse-zh_CN{padding:0}'
+								+'#wrap>#content>#article>ul>li{display:inline-block;width:33%;}'));
+					dv = document.createElement('div');
+					dv.style.width = "600px";
+					dv.style.float = 'right';
+					dv.style.marginTop = '-30px';
+					dv.style.marginBottom = 0;
+					//g = document.createElement('gcse:searchbox-only');
+					g = document.createElement('gcse:search');
+					dv.appendChild(g);
+					e.insertBefore(dv, e.firstChild);
+					document.getElementsByTagName('head')[0].appendChild(s);
+					(function() {
+					 var cx = '013783129810095556381:WMX1457836548';
+					 var gcse = document.createElement('script');
+					 gcse.type = 'text/javascript';
+					 gcse.async = true;
+					 gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+					 '//www.google.com/cse/cse.js?cx=' + cx;
+					 var s = document.getElementsByTagName('script')[0];
+					 s.parentNode.insertBefore(gcse, s);
+					 })();
+				}
+			};
+		</script> 
+	</head>
+	<body>
+		<div id="wrap">
+			<h4 id="title">centos搭建php ci环境(基于ant)</h4>
+			<hr>
+			<script type="text/javascript">onload();</script>
+			<div id="content">
+				<div id="article">
+					
+<pre class="brush:bash">
+＃添加jenkins源
+curl -o /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+
+#安装环境
+yum install gcc java-1.7.0-openjdk php php-mysql php-pdo php-devel php-pear php-dom php-xsl ImageMagick-devel jenkins ant git(按需)
+
+#安装pear包
+#如通过channel无法安装，可下载tgz包，然后通过pear install x.tgz来安装
+
+pear config-set auto_discover 1
+
+#安装phpab
+pear install --alldeps pear.netpirates.net/Autoload
+
+#设置php.ini
+echo 'date.timezone = Asia/Shanghai'&gt;&gt;/etc/php.ini
+
+#安装phing
+pear channel-discover pear.phing.info
+pear install --alldeps phing/phing
+
+#安装phpparser
+pear install --alldeps nikic.github.com/pear/PHPParser-0.9.4
+
+#安装phpdox
+pear install --alldeps pear.netpirates.net/phpDox-0.5.0
+
+#安装phploc
+pear install --alldeps pear.phpunit.de/phploc
+
+#安装phpunit
+pear install --alldeps pear.phpunit.de/PHPUnit
+pear install --alldeps pear.phpunit.de/DbUnit
+
+#安装phpmd
+pear channel-discover pear.phpmd.org
+pear channel-discover pear.pdepend.org
+pear install --alldeps phpmd/PHP_PMD
+
+#安装phpcb
+pear install Text_Highlighter-0.7.3
+pear channel-discover pear.phpqatools.org
+pear install --alldeps phpqatools/PHP_CodeBrowser
+pear install pear/MDB2#mysql
+
+#安装phpcpd
+pear install --alldeps pear.phpunit.de/phpcpd
+
+#安装phpcdc
+pear install --alldeps pear.phpunit.de/phpdcd-0.9.3
+</pre>
+
+<ul>
+<li>
+安装jenkins插件
+<pre>
+Clover PHP Plugin
+PHP Plugin
+Version Number Plugin
+Post build task
+GitHub Plugin(按需)
+</pre>
+
+</ul>
+
+<ul>
+<li>
+创建job
+
+<li>
+修改job下的config.xml的builders与publishers
+<pre class="brush:xml">
+  &lt;builders&gt;
+    &lt;hudson.tasks.Ant&gt;
+      &lt;targets&gt;&lt;/targets&gt;
+    &lt;/hudson.tasks.Ant&gt;
+  &lt;/builders&gt;
+  &lt;publishers&gt;
+    &lt;hudson.plugins.checkstyle.CheckStylePublisher&gt;
+      &lt;healthy&gt;&lt;/healthy&gt;
+      &lt;unHealthy&gt;&lt;/unHealthy&gt;
+      &lt;thresholdLimit&gt;low&lt;/thresholdLimit&gt;
+      &lt;pluginName&gt;[CHECKSTYLE] &lt;/pluginName&gt;
+      &lt;defaultEncoding&gt;&lt;/defaultEncoding&gt;
+      &lt;canRunOnFailed&gt;true&lt;/canRunOnFailed&gt;
+      &lt;useDeltaValues&gt;false&lt;/useDeltaValues&gt;
+      &lt;thresholds&gt;
+        &lt;unstableTotalAll&gt;&lt;/unstableTotalAll&gt;
+        &lt;unstableTotalHigh&gt;&lt;/unstableTotalHigh&gt;
+        &lt;unstableTotalNormal&gt;&lt;/unstableTotalNormal&gt;
+        &lt;unstableTotalLow&gt;&lt;/unstableTotalLow&gt;
+        &lt;unstableNewAll&gt;&lt;/unstableNewAll&gt;
+        &lt;unstableNewHigh&gt;&lt;/unstableNewHigh&gt;
+        &lt;unstableNewNormal&gt;&lt;/unstableNewNormal&gt;
+        &lt;unstableNewLow&gt;&lt;/unstableNewLow&gt;
+        &lt;failedTotalAll&gt;&lt;/failedTotalAll&gt;
+        &lt;failedTotalHigh&gt;&lt;/failedTotalHigh&gt;
+        &lt;failedTotalNormal&gt;&lt;/failedTotalNormal&gt;
+        &lt;failedTotalLow&gt;&lt;/failedTotalLow&gt;
+        &lt;failedNewAll&gt;&lt;/failedNewAll&gt;
+        &lt;failedNewHigh&gt;&lt;/failedNewHigh&gt;
+        &lt;failedNewNormal&gt;&lt;/failedNewNormal&gt;
+        &lt;failedNewLow&gt;&lt;/failedNewLow&gt;
+      &lt;/thresholds&gt;
+      &lt;shouldDetectModules&gt;false&lt;/shouldDetectModules&gt;
+      &lt;pattern&gt;build/logs/checkstyle.xml&lt;/pattern&gt;
+    &lt;/hudson.plugins.checkstyle.CheckStylePublisher&gt;
+    &lt;hudson.plugins.pmd.PmdPublisher&gt;
+      &lt;healthy&gt;&lt;/healthy&gt;
+      &lt;unHealthy&gt;&lt;/unHealthy&gt;
+      &lt;thresholdLimit&gt;low&lt;/thresholdLimit&gt;
+      &lt;pluginName&gt;[PMD] &lt;/pluginName&gt;
+      &lt;defaultEncoding&gt;&lt;/defaultEncoding&gt;
+      &lt;canRunOnFailed&gt;true&lt;/canRunOnFailed&gt;
+      &lt;useDeltaValues&gt;false&lt;/useDeltaValues&gt;
+      &lt;thresholds&gt;
+        &lt;unstableTotalAll&gt;&lt;/unstableTotalAll&gt;
+        &lt;unstableTotalHigh&gt;&lt;/unstableTotalHigh&gt;
+        &lt;unstableTotalNormal&gt;&lt;/unstableTotalNormal&gt;
+        &lt;unstableTotalLow&gt;&lt;/unstableTotalLow&gt;
+        &lt;unstableNewAll&gt;&lt;/unstableNewAll&gt;
+        &lt;unstableNewHigh&gt;&lt;/unstableNewHigh&gt;
+        &lt;unstableNewNormal&gt;&lt;/unstableNewNormal&gt;
+        &lt;unstableNewLow&gt;&lt;/unstableNewLow&gt;
+        &lt;failedTotalAll&gt;&lt;/failedTotalAll&gt;
+        &lt;failedTotalHigh&gt;&lt;/failedTotalHigh&gt;
+        &lt;failedTotalNormal&gt;&lt;/failedTotalNormal&gt;
+        &lt;failedTotalLow&gt;&lt;/failedTotalLow&gt;
+        &lt;failedNewAll&gt;&lt;/failedNewAll&gt;
+        &lt;failedNewHigh&gt;&lt;/failedNewHigh&gt;
+        &lt;failedNewNormal&gt;&lt;/failedNewNormal&gt;
+        &lt;failedNewLow&gt;&lt;/failedNewLow&gt;
+      &lt;/thresholds&gt;
+      &lt;shouldDetectModules&gt;false&lt;/shouldDetectModules&gt;
+      &lt;pattern&gt;build/logs/pmd.xml&lt;/pattern&gt;
+    &lt;/hudson.plugins.pmd.PmdPublisher&gt;
+    &lt;hudson.plugins.dry.DryPublisher&gt;
+      &lt;healthy&gt;&lt;/healthy&gt;
+      &lt;unHealthy&gt;&lt;/unHealthy&gt;
+      &lt;thresholdLimit&gt;low&lt;/thresholdLimit&gt;
+      &lt;pluginName&gt;[DRY] &lt;/pluginName&gt;
+      &lt;defaultEncoding&gt;&lt;/defaultEncoding&gt;
+      &lt;canRunOnFailed&gt;true&lt;/canRunOnFailed&gt;
+      &lt;useDeltaValues&gt;false&lt;/useDeltaValues&gt;
+      &lt;thresholds&gt;
+        &lt;unstableTotalAll&gt;&lt;/unstableTotalAll&gt;
+        &lt;unstableTotalHigh&gt;&lt;/unstableTotalHigh&gt;
+        &lt;unstableTotalNormal&gt;&lt;/unstableTotalNormal&gt;
+        &lt;unstableTotalLow&gt;&lt;/unstableTotalLow&gt;
+        &lt;unstableNewAll&gt;&lt;/unstableNewAll&gt;
+        &lt;unstableNewHigh&gt;&lt;/unstableNewHigh&gt;
+        &lt;unstableNewNormal&gt;&lt;/unstableNewNormal&gt;
+        &lt;unstableNewLow&gt;&lt;/unstableNewLow&gt;
+        &lt;failedTotalAll&gt;&lt;/failedTotalAll&gt;
+        &lt;failedTotalHigh&gt;&lt;/failedTotalHigh&gt;
+        &lt;failedTotalNormal&gt;&lt;/failedTotalNormal&gt;
+        &lt;failedTotalLow&gt;&lt;/failedTotalLow&gt;
+        &lt;failedNewAll&gt;&lt;/failedNewAll&gt;
+        &lt;failedNewHigh&gt;&lt;/failedNewHigh&gt;
+        &lt;failedNewNormal&gt;&lt;/failedNewNormal&gt;
+        &lt;failedNewLow&gt;&lt;/failedNewLow&gt;
+      &lt;/thresholds&gt;
+      &lt;shouldDetectModules&gt;false&lt;/shouldDetectModules&gt;
+      &lt;pattern&gt;build/logs/pmd-cpd.xml&lt;/pattern&gt;
+      &lt;highThreshold&gt;50&lt;/highThreshold&gt;
+      &lt;normalThreshold&gt;25&lt;/normalThreshold&gt;
+    &lt;/hudson.plugins.dry.DryPublisher&gt;
+    &lt;hudson.plugins.plot.PlotPublisher&gt;
+      &lt;plots&gt;
+        &lt;hudson.plugins.plot.Plot&gt;
+          &lt;title&gt;A - Lines of code&lt;/title&gt;
+          &lt;yaxis&gt;Lines of Code&lt;/yaxis&gt;
+          &lt;series&gt;
+            &lt;hudson.plugins.plot.CSVSeries&gt;
+              &lt;file&gt;build/logs/phploc.csv&lt;/file&gt;
+              &lt;label&gt;&lt;/label&gt;
+              &lt;fileType&gt;csv&lt;/fileType&gt;
+              &lt;strExclusionSet&gt;
+                &lt;string&gt;Lines of Code (LOC)&lt;/string&gt;
+                &lt;string&gt;Comment Lines of Code (CLOC)&lt;/string&gt;
+                &lt;string&gt;Non-Comment Lines of Code (NCLOC)&lt;/string&gt;
+              &lt;/strExclusionSet&gt;
+              &lt;inclusionFlag&gt;INCLUDE_BY_STRING&lt;/inclusionFlag&gt;
+              &lt;exclusionValues&gt;Lines of Code (LOC),Comment Lines of Code (CLOC),Non-Comment Lines of Code (NCLOC)&lt;/exclusionValues&gt;
+              &lt;url&gt;&lt;/url&gt;
+              &lt;displayTableFlag&gt;false&lt;/displayTableFlag&gt;
+            &lt;/hudson.plugins.plot.CSVSeries&gt;
+          &lt;/series&gt;
+          &lt;group&gt;phploc&lt;/group&gt;
+          &lt;numBuilds&gt;100&lt;/numBuilds&gt;
+          &lt;csvFileName&gt;123.csv&lt;/csvFileName&gt;
+          &lt;csvLastModification&gt;0&lt;/csvLastModification&gt;
+          &lt;style&gt;line&lt;/style&gt;
+          &lt;useDescr&gt;false&lt;/useDescr&gt;
+        &lt;/hudson.plugins.plot.Plot&gt;
+        &lt;hudson.plugins.plot.Plot&gt;
+          &lt;title&gt;B - Structures&lt;/title&gt;
+          &lt;yaxis&gt;Count&lt;/yaxis&gt;
+          &lt;series&gt;
+            &lt;hudson.plugins.plot.CSVSeries&gt;
+              &lt;file&gt;build/logs/phploc.csv&lt;/file&gt;
+              &lt;label&gt;&lt;/label&gt;
+              &lt;fileType&gt;csv&lt;/fileType&gt;
+              &lt;strExclusionSet&gt;
+                &lt;string&gt;Functions&lt;/string&gt;
+                &lt;string&gt;Classes&lt;/string&gt;
+                &lt;string&gt;Namespaces&lt;/string&gt;
+                &lt;string&gt;Files&lt;/string&gt;
+                &lt;string&gt;Directories&lt;/string&gt;
+                &lt;string&gt;Methods&lt;/string&gt;
+                &lt;string&gt;Interfaces&lt;/string&gt;
+                &lt;string&gt;Constants&lt;/string&gt;
+                &lt;string&gt;Anonymous Functions&lt;/string&gt;
+              &lt;/strExclusionSet&gt;
+              &lt;inclusionFlag&gt;INCLUDE_BY_STRING&lt;/inclusionFlag&gt;
+              &lt;exclusionValues&gt;Directories,Files,Namespaces,Interfaces,Classes,Methods,Functions,Anonymous Functions,Constants&lt;/exclusionValues&gt;
+              &lt;url&gt;&lt;/url&gt;
+              &lt;displayTableFlag&gt;false&lt;/displayTableFlag&gt;
+            &lt;/hudson.plugins.plot.CSVSeries&gt;
+          &lt;/series&gt;
+          &lt;group&gt;phploc&lt;/group&gt;
+          &lt;numBuilds&gt;100&lt;/numBuilds&gt;
+          &lt;csvFileName&gt;1107599928.csv&lt;/csvFileName&gt;
+          &lt;csvLastModification&gt;0&lt;/csvLastModification&gt;
+          &lt;style&gt;line&lt;/style&gt;
+          &lt;useDescr&gt;false&lt;/useDescr&gt;
+        &lt;/hudson.plugins.plot.Plot&gt;
+        &lt;hudson.plugins.plot.Plot&gt;
+          &lt;title&gt;G - Average Length&lt;/title&gt;
+          &lt;yaxis&gt;Average Non-Comment Lines of Code&lt;/yaxis&gt;
+          &lt;series&gt;
+            &lt;hudson.plugins.plot.CSVSeries&gt;
+              &lt;file&gt;build/logs/phploc.csv&lt;/file&gt;
+              &lt;label&gt;&lt;/label&gt;
+              &lt;fileType&gt;csv&lt;/fileType&gt;
+              &lt;strExclusionSet&gt;
+                &lt;string&gt;Average Method Length (NCLOC)&lt;/string&gt;
+                &lt;string&gt;Average Class Length (NCLOC)&lt;/string&gt;
+              &lt;/strExclusionSet&gt;
+              &lt;inclusionFlag&gt;INCLUDE_BY_STRING&lt;/inclusionFlag&gt;
+              &lt;exclusionValues&gt;Average Class Length (NCLOC),Average Method Length (NCLOC)&lt;/exclusionValues&gt;
+              &lt;url&gt;&lt;/url&gt;
+              &lt;displayTableFlag&gt;false&lt;/displayTableFlag&gt;
+            &lt;/hudson.plugins.plot.CSVSeries&gt;
+          &lt;/series&gt;
+          &lt;group&gt;phploc&lt;/group&gt;
+          &lt;numBuilds&gt;100&lt;/numBuilds&gt;
+          &lt;csvFileName&gt;523405415.csv&lt;/csvFileName&gt;
+          &lt;csvLastModification&gt;0&lt;/csvLastModification&gt;
+          &lt;style&gt;line&lt;/style&gt;
+          &lt;useDescr&gt;false&lt;/useDescr&gt;
+        &lt;/hudson.plugins.plot.Plot&gt;
+        &lt;hudson.plugins.plot.Plot&gt;
+          &lt;title&gt;H - Relative Cyclomatic Complexity&lt;/title&gt;
+          &lt;yaxis&gt;Cyclomatic Complexity by Structure&lt;/yaxis&gt;
+          &lt;series&gt;
+            &lt;hudson.plugins.plot.CSVSeries&gt;
+              &lt;file&gt;build/logs/phploc.csv&lt;/file&gt;
+              &lt;label&gt;&lt;/label&gt;
+              &lt;fileType&gt;csv&lt;/fileType&gt;
+              &lt;strExclusionSet&gt;
+                &lt;string&gt;Cyclomatic Complexity / Lines of Code&lt;/string&gt;
+                &lt;string&gt;Cyclomatic Complexity / Number of Methods&lt;/string&gt;
+              &lt;/strExclusionSet&gt;
+              &lt;inclusionFlag&gt;INCLUDE_BY_STRING&lt;/inclusionFlag&gt;
+              &lt;exclusionValues&gt;Cyclomatic Complexity / Lines of Code,Cyclomatic Complexity / Number of Methods&lt;/exclusionValues&gt;
+              &lt;url&gt;&lt;/url&gt;
+              &lt;displayTableFlag&gt;false&lt;/displayTableFlag&gt;
+            &lt;/hudson.plugins.plot.CSVSeries&gt;
+          &lt;/series&gt;
+          &lt;group&gt;phploc&lt;/group&gt;
+          &lt;numBuilds&gt;100&lt;/numBuilds&gt;
+          &lt;csvFileName&gt;186376189.csv&lt;/csvFileName&gt;
+          &lt;csvLastModification&gt;0&lt;/csvLastModification&gt;
+          &lt;style&gt;line&lt;/style&gt;
+          &lt;useDescr&gt;false&lt;/useDescr&gt;
+        &lt;/hudson.plugins.plot.Plot&gt;
+        &lt;hudson.plugins.plot.Plot&gt;
+          &lt;title&gt;D - Types of Classes&lt;/title&gt;
+          &lt;yaxis&gt;Count&lt;/yaxis&gt;
+          &lt;series&gt;
+            &lt;hudson.plugins.plot.CSVSeries&gt;
+              &lt;file&gt;build/logs/phploc.csv&lt;/file&gt;
+              &lt;label&gt;&lt;/label&gt;
+              &lt;fileType&gt;csv&lt;/fileType&gt;
+              &lt;strExclusionSet&gt;
+                &lt;string&gt;Abstract Classes&lt;/string&gt;
+                &lt;string&gt;Classes&lt;/string&gt;
+                &lt;string&gt;Concrete Classes&lt;/string&gt;
+              &lt;/strExclusionSet&gt;
+              &lt;inclusionFlag&gt;INCLUDE_BY_STRING&lt;/inclusionFlag&gt;
+              &lt;exclusionValues&gt;Classes,Abstract Classes,Concrete Classes&lt;/exclusionValues&gt;
+              &lt;url&gt;&lt;/url&gt;
+              &lt;displayTableFlag&gt;false&lt;/displayTableFlag&gt;
+            &lt;/hudson.plugins.plot.CSVSeries&gt;
+          &lt;/series&gt;
+          &lt;group&gt;phploc&lt;/group&gt;
+          &lt;numBuilds&gt;100&lt;/numBuilds&gt;
+          &lt;csvFileName&gt;594356163.csv&lt;/csvFileName&gt;
+          &lt;csvLastModification&gt;0&lt;/csvLastModification&gt;
+          &lt;style&gt;line&lt;/style&gt;
+          &lt;useDescr&gt;false&lt;/useDescr&gt;
+        &lt;/hudson.plugins.plot.Plot&gt;
+        &lt;hudson.plugins.plot.Plot&gt;
+          &lt;title&gt;E - Types of Methods&lt;/title&gt;
+          &lt;yaxis&gt;Count&lt;/yaxis&gt;
+          &lt;series&gt;
+            &lt;hudson.plugins.plot.CSVSeries&gt;
+              &lt;file&gt;build/logs/phploc.csv&lt;/file&gt;
+              &lt;label&gt;&lt;/label&gt;
+              &lt;fileType&gt;csv&lt;/fileType&gt;
+              &lt;strExclusionSet&gt;
+                &lt;string&gt;Methods&lt;/string&gt;
+                &lt;string&gt;Static Methods&lt;/string&gt;
+                &lt;string&gt;Non-Static Methods&lt;/string&gt;
+                &lt;string&gt;Public Methods&lt;/string&gt;
+                &lt;string&gt;Non-Public Methods&lt;/string&gt;
+              &lt;/strExclusionSet&gt;
+              &lt;inclusionFlag&gt;INCLUDE_BY_STRING&lt;/inclusionFlag&gt;
+              &lt;exclusionValues&gt;Methods,Non-Static Methods,Static Methods,Public Methods,Non-Public Methods&lt;/exclusionValues&gt;
+              &lt;url&gt;&lt;/url&gt;
+              &lt;displayTableFlag&gt;false&lt;/displayTableFlag&gt;
+            &lt;/hudson.plugins.plot.CSVSeries&gt;
+          &lt;/series&gt;
+          &lt;group&gt;phploc&lt;/group&gt;
+          &lt;numBuilds&gt;100&lt;/numBuilds&gt;
+          &lt;csvFileName&gt;1019987862.csv&lt;/csvFileName&gt;
+          &lt;csvLastModification&gt;0&lt;/csvLastModification&gt;
+          &lt;style&gt;line&lt;/style&gt;
+          &lt;useDescr&gt;false&lt;/useDescr&gt;
+        &lt;/hudson.plugins.plot.Plot&gt;
+        &lt;hudson.plugins.plot.Plot&gt;
+          &lt;title&gt;F - Types of Constants&lt;/title&gt;
+          &lt;yaxis&gt;Count&lt;/yaxis&gt;
+          &lt;series&gt;
+            &lt;hudson.plugins.plot.CSVSeries&gt;
+              &lt;file&gt;build/logs/phploc.csv&lt;/file&gt;
+              &lt;label&gt;&lt;/label&gt;
+              &lt;fileType&gt;csv&lt;/fileType&gt;
+              &lt;strExclusionSet&gt;
+                &lt;string&gt;Class Constants&lt;/string&gt;
+                &lt;string&gt;Global Constants&lt;/string&gt;
+                &lt;string&gt;Constants&lt;/string&gt;
+              &lt;/strExclusionSet&gt;
+              &lt;inclusionFlag&gt;INCLUDE_BY_STRING&lt;/inclusionFlag&gt;
+              &lt;exclusionValues&gt;Constants,Global Constants,Class Constants&lt;/exclusionValues&gt;
+              &lt;url&gt;&lt;/url&gt;
+              &lt;displayTableFlag&gt;false&lt;/displayTableFlag&gt;
+            &lt;/hudson.plugins.plot.CSVSeries&gt;
+          &lt;/series&gt;
+          &lt;group&gt;phploc&lt;/group&gt;
+          &lt;numBuilds&gt;100&lt;/numBuilds&gt;
+          &lt;csvFileName&gt;217648577.csv&lt;/csvFileName&gt;
+          &lt;csvLastModification&gt;0&lt;/csvLastModification&gt;
+          &lt;style&gt;line&lt;/style&gt;
+          &lt;useDescr&gt;false&lt;/useDescr&gt;
+        &lt;/hudson.plugins.plot.Plot&gt;
+        &lt;hudson.plugins.plot.Plot&gt;
+          &lt;title&gt;C - Testing&lt;/title&gt;
+          &lt;yaxis&gt;Count&lt;/yaxis&gt;
+          &lt;series&gt;
+            &lt;hudson.plugins.plot.CSVSeries&gt;
+              &lt;file&gt;build/logs/phploc.csv&lt;/file&gt;
+              &lt;label&gt;&lt;/label&gt;
+              &lt;fileType&gt;csv&lt;/fileType&gt;
+              &lt;strExclusionSet&gt;
+                &lt;string&gt;Functions&lt;/string&gt;
+                &lt;string&gt;Classes&lt;/string&gt;
+                &lt;string&gt;Methods&lt;/string&gt;
+                &lt;string&gt;Test Clases&lt;/string&gt;
+                &lt;string&gt;Test Methods&lt;/string&gt;
+              &lt;/strExclusionSet&gt;
+              &lt;inclusionFlag&gt;INCLUDE_BY_STRING&lt;/inclusionFlag&gt;
+              &lt;exclusionValues&gt;Classes,Methods,Functions,Test Clases,Test Methods&lt;/exclusionValues&gt;
+              &lt;url&gt;&lt;/url&gt;
+              &lt;displayTableFlag&gt;false&lt;/displayTableFlag&gt;
+            &lt;/hudson.plugins.plot.CSVSeries&gt;
+          &lt;/series&gt;
+          &lt;group&gt;phploc&lt;/group&gt;
+          &lt;numBuilds&gt;100&lt;/numBuilds&gt;
+          &lt;csvFileName&gt;174807245.csv&lt;/csvFileName&gt;
+          &lt;csvLastModification&gt;0&lt;/csvLastModification&gt;
+          &lt;style&gt;line&lt;/style&gt;
+          &lt;useDescr&gt;false&lt;/useDescr&gt;
+        &lt;/hudson.plugins.plot.Plot&gt;
+      &lt;/plots&gt;
+    &lt;/hudson.plugins.plot.PlotPublisher&gt;
+    &lt;org.jenkinsci.plugins.cloverphp.CloverPublisher&gt;
+      &lt;publishHtmlReport&gt;true&lt;/publishHtmlReport&gt;
+      &lt;reportDir&gt;build/coverage&lt;/reportDir&gt;
+      &lt;xmlLocation&gt;build/logs/clover.xml&lt;/xmlLocation&gt;
+      &lt;disableArchiving&gt;false&lt;/disableArchiving&gt;
+      &lt;healthyTarget&gt;
+        &lt;methodCoverage&gt;70&lt;/methodCoverage&gt;
+        &lt;statementCoverage&gt;80&lt;/statementCoverage&gt;
+      &lt;/healthyTarget&gt;
+      &lt;unhealthyTarget/&gt;
+      &lt;failingTarget/&gt;
+    &lt;/org.jenkinsci.plugins.cloverphp.CloverPublisher&gt;
+    &lt;htmlpublisher.HtmlPublisher&gt;
+      &lt;reportTargets&gt;
+        &lt;htmlpublisher.HtmlPublisherTarget&gt;
+          &lt;reportName&gt;API Documentation&lt;/reportName&gt;
+          &lt;reportDir&gt;build/api&lt;/reportDir&gt;
+          &lt;reportFiles&gt;index.xhtml&lt;/reportFiles&gt;
+          &lt;keepAll&gt;true&lt;/keepAll&gt;
+          &lt;wrapperName&gt;htmlpublisher-wrapper.html&lt;/wrapperName&gt;
+        &lt;/htmlpublisher.HtmlPublisherTarget&gt;
+        &lt;htmlpublisher.HtmlPublisherTarget&gt;
+          &lt;reportName&gt;Code Browser&lt;/reportName&gt;
+          &lt;reportDir&gt;build/code-browser&lt;/reportDir&gt;
+          &lt;reportFiles&gt;index.html&lt;/reportFiles&gt;
+          &lt;keepAll&gt;true&lt;/keepAll&gt;
+          &lt;wrapperName&gt;htmlpublisher-wrapper.html&lt;/wrapperName&gt;
+        &lt;/htmlpublisher.HtmlPublisherTarget&gt;
+      &lt;/reportTargets&gt;
+    &lt;/htmlpublisher.HtmlPublisher&gt;
+    &lt;xunit&gt;
+      &lt;types&gt;
+        &lt;PHPUnitJunitHudsonTestType&gt;
+          &lt;pattern&gt;build/logs/junit.xml&lt;/pattern&gt;
+          &lt;faildedIfNotNew&gt;true&lt;/faildedIfNotNew&gt;
+          &lt;deleteOutputFiles&gt;true&lt;/deleteOutputFiles&gt;
+          &lt;stopProcessingIfError&gt;true&lt;/stopProcessingIfError&gt;
+        &lt;/PHPUnitJunitHudsonTestType&gt;
+      &lt;/types&gt;
+      &lt;thresholds&gt;
+        &lt;org.jenkinsci.plugins.xunit.threshold.FailedThreshold&gt;
+          &lt;unstableThreshold&gt;0&lt;/unstableThreshold&gt;
+          &lt;unstableNewThreshold&gt;0&lt;/unstableNewThreshold&gt;
+          &lt;failureThreshold&gt;0&lt;/failureThreshold&gt;
+          &lt;failureNewThreshold&gt;0&lt;/failureNewThreshold&gt;
+        &lt;/org.jenkinsci.plugins.xunit.threshold.FailedThreshold&gt;
+        &lt;org.jenkinsci.plugins.xunit.threshold.SkippedThreshold&gt;
+          &lt;unstableThreshold&gt;0&lt;/unstableThreshold&gt;
+          &lt;unstableNewThreshold&gt;0&lt;/unstableNewThreshold&gt;
+          &lt;failureThreshold&gt;0&lt;/failureThreshold&gt;
+          &lt;failureNewThreshold&gt;0&lt;/failureNewThreshold&gt;
+        &lt;/org.jenkinsci.plugins.xunit.threshold.SkippedThreshold&gt;
+      &lt;/thresholds&gt;
+      &lt;thresholdMode&gt;1&lt;/thresholdMode&gt;
+    &lt;/xunit&gt;
+    &lt;hudson.plugins.jdepend.JDependRecorder&gt;
+      &lt;configuredJDependFile&gt;build/logs/jdepend.xml&lt;/configuredJDependFile&gt;
+    &lt;/hudson.plugins.jdepend.JDependRecorder&gt;
+    &lt;hudson.plugins.violations.ViolationsPublisher&gt;
+      &lt;config&gt;
+        &lt;suppressions class="tree-set"&gt;
+          &lt;no-comparator/&gt;
+        &lt;/suppressions&gt;
+        &lt;typeConfigs&gt;
+          &lt;no-comparator/&gt;
+          &lt;entry&gt;
+            &lt;string&gt;checkstyle&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;checkstyle&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;build/logs/checkstyle.xml&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;codenarc&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;codenarc&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;cpd&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;cpd&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;build/logs/pmd-cpd.xml&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;cpplint&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;cpplint&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;csslint&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;csslint&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;findbugs&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;findbugs&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;fxcop&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;fxcop&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;gendarme&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;gendarme&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;jcreport&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;jcreport&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;jslint&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;jslint&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;pep8&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;pep8&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;pmd&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;pmd&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;build/logs/pmd.xml&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;pylint&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;pylint&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;simian&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;simian&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+          &lt;entry&gt;
+            &lt;string&gt;stylecop&lt;/string&gt;
+            &lt;hudson.plugins.violations.TypeConfig&gt;
+              &lt;type&gt;stylecop&lt;/type&gt;
+              &lt;min&gt;10&lt;/min&gt;
+              &lt;max&gt;999&lt;/max&gt;
+              &lt;unstable&gt;999&lt;/unstable&gt;
+              &lt;usePattern&gt;false&lt;/usePattern&gt;
+              &lt;pattern&gt;&lt;/pattern&gt;
+            &lt;/hudson.plugins.violations.TypeConfig&gt;
+          &lt;/entry&gt;
+        &lt;/typeConfigs&gt;
+        &lt;limit&gt;100&lt;/limit&gt;
+        &lt;sourcePathPattern&gt;&lt;/sourcePathPattern&gt;
+        &lt;fauxProjectPath&gt;&lt;/fauxProjectPath&gt;
+        &lt;encoding&gt;default&lt;/encoding&gt;
+      &lt;/config&gt;
+    &lt;/hudson.plugins.violations.ViolationsPublisher&gt;
+  &lt;/publishers&gt;
+</pre>
+
+<li>
+创建build环境
+
+</ul>
+<p>
+'''build.xml'''
+</p>
+<pre class="brush:xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;project name="%PROJECT-NAME%" default="build"&gt;
+ &lt;target name="build"
+   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/&gt;
+
+ &lt;target name="build-parallel"
+   depends="prepare,lint,tools-parallel,phpunit,phpcb"/&gt;
+
+ &lt;target name="tools-parallel"
+         description="Run tools in parallel"&gt;
+  &lt;parallel threadCount="2"&gt;
+   &lt;sequential&gt;
+    &lt;antcall target="pdepend"/&gt;
+    &lt;antcall target="phpmd-ci"/&gt;
+   &lt;/sequential&gt;
+   &lt;antcall target="phpcpd"/&gt;
+   &lt;antcall target="phpcs-ci"/&gt;
+   &lt;antcall target="phploc"/&gt;
+   &lt;antcall target="phpdox"/&gt;
+  &lt;/parallel&gt;
+ &lt;/target&gt;
+
+ &lt;target name="clean" description="Cleanup build artifacts"&gt;
+  &lt;delete dir="${basedir}/build/api"/&gt;
+  &lt;delete dir="${basedir}/build/code-browser"/&gt;
+  &lt;delete dir="${basedir}/build/coverage"/&gt;
+  &lt;delete dir="${basedir}/build/logs"/&gt;
+  &lt;delete dir="${basedir}/build/pdepend"/&gt;
+  &lt;delete dir="${basedir}/build/phpdox"/&gt;
+ &lt;/target&gt;
+
+ &lt;target name="prepare" depends="clean,phpab"
+         description="Prepare for build"&gt;
+  &lt;mkdir dir="${basedir}/build/api"/&gt;
+  &lt;mkdir dir="${basedir}/build/code-browser"/&gt;
+  &lt;mkdir dir="${basedir}/build/coverage"/&gt;
+  &lt;mkdir dir="${basedir}/build/logs"/&gt;
+  &lt;mkdir dir="${basedir}/build/pdepend"/&gt;
+  &lt;mkdir dir="${basedir}/build/phpdox"/&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpab" description="Generate autoloader scripts"&gt;
+  &lt;exec executable="phpab"&gt;
+   &lt;arg value="--output" /&gt;
+   &lt;arg path="${basedir}/src/application/autoload.php" /&gt;
+   &lt;arg path="${basedir}/src/application" /&gt;
+  &lt;/exec&gt;
+
+  &lt;exec executable="phpab"&gt;
+   &lt;arg value="--output" /&gt;
+   &lt;arg path="${basedir}/src/framework/autoload.php" /&gt;
+   &lt;arg path="${basedir}/src/framework" /&gt;
+  &lt;/exec&gt;
+
+  &lt;exec executable="phpab"&gt;
+   &lt;arg value="--output" /&gt;
+   &lt;arg path="${basedir}/tests/autoload.php" /&gt;
+   &lt;arg path="${basedir}/tests" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phar" description="Generate PHP Archive (PHAR)"&gt;
+  &lt;exec executable="phpab"&gt;
+   &lt;arg value="--phar" /&gt;
+   &lt;arg value="--output" /&gt;
+   &lt;arg path="${basedir}/build/bankaccount.phar" /&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="lint"&gt;
+  &lt;apply executable="php" failonerror="true"&gt;
+   &lt;arg value="-l" /&gt;
+
+   &lt;fileset dir="${basedir}/src"&gt;
+    &lt;include name="**/*.php" /&gt;
+    &lt;modified /&gt;
+   &lt;/fileset&gt;
+
+   &lt;fileset dir="${basedir}/tests"&gt;
+    &lt;include name="**/*.php" /&gt;
+    &lt;modified /&gt;
+   &lt;/fileset&gt;
+  &lt;/apply&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phploc" description="Measure project size using PHPLOC"&gt;
+  &lt;exec executable="phploc"&gt;
+   &lt;arg value="--log-csv" /&gt;
+   &lt;arg value="${basedir}/build/logs/phploc.csv" /&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="pdepend"
+         description="Calculate software metrics using PHP_Depend"&gt;
+  &lt;exec executable="pdepend"&gt;
+   &lt;arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" /&gt;
+   &lt;arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" /&gt;
+   &lt;arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" /&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpmd"
+         description="Perform project mess detection using PHPMD"&gt;
+  &lt;exec executable="phpmd"&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+   &lt;arg value="text" /&gt;
+   &lt;arg value="${basedir}/build/phpmd.xml" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpmd-ci"
+         description="Perform project mess detection using PHPMD"&gt;
+  &lt;exec executable="phpmd"&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+   &lt;arg value="xml" /&gt;
+   &lt;arg value="${basedir}/build/phpmd.xml" /&gt;
+   &lt;arg value="--reportfile" /&gt;
+   &lt;arg value="${basedir}/build/logs/pmd.xml" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpcs"
+         description="Find coding standard violations using PHP_CodeSniffer"&gt;
+  &lt;exec executable="phpcs"&gt;
+   &lt;arg value="--standard=${basedir}/build/phpcs.xml" /&gt;
+   &lt;arg value="--ignore=autoload.php" /&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpcs-ci"
+         description="Find coding standard violations using PHP_CodeSniffer"&gt;
+  &lt;exec executable="phpcs" output="/dev/null"&gt;
+   &lt;arg value="--report=checkstyle" /&gt;
+   &lt;arg value="--report-file=${basedir}/build/logs/checkstyle.xml" /&gt;
+   &lt;arg value="--standard=${basedir}/build/phpcs.xml" /&gt;
+   &lt;arg value="--ignore=autoload.php" /&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpcpd" description="Find duplicate code using PHPCPD"&gt;
+  &lt;exec executable="phpcpd"&gt;
+   &lt;arg value="--log-pmd" /&gt;
+   &lt;arg value="${basedir}/build/logs/pmd-cpd.xml" /&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpdox"
+         description="Generate API documentation using phpDox"&gt;
+  &lt;exec executable="phpdox"/&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpunit" description="Run unit tests with PHPUnit"&gt;
+  &lt;exec executable="phpunit" failonerror="true"/&gt;
+ &lt;/target&gt;
+
+ &lt;target name="phpcb"
+         description="Aggregate tool output with PHP_CodeBrowser"&gt;
+  &lt;exec executable="phpcb"&gt;
+   &lt;arg value="--log" /&gt;
+   &lt;arg path="${basedir}/build/logs" /&gt;
+   &lt;arg value="--source" /&gt;
+   &lt;arg path="${basedir}/src" /&gt;
+   &lt;arg value="--output" /&gt;
+   &lt;arg path="${basedir}/build/code-browser" /&gt;
+  &lt;/exec&gt;
+ &lt;/target&gt;
+&lt;/project&gt;
+</pre>
+<p>
+'''phpdox.xml.dist'''
+</p>
+<pre class="brush:xml">
+&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+
+&lt;phpdox xmlns="http://phpdox.de/config"&gt;
+ &lt;project name="BankAccount" source="src" workdir="build/phpdox"&gt;
+  &lt;collector publiconly="false"&gt;
+   &lt;include mask="*.php" /&gt;
+   &lt;exclude mask="*Autoload.php" /&gt;
+  &lt;/collector&gt;
+
+  &lt;generator output="build"&gt;
+   &lt;build engine="html" enabled="true" output="api"/&gt;
+  &lt;/generator&gt;
+ &lt;/project&gt;
+&lt;/phpdox&gt;
+</pre>
+<p>
+'''phpunit.xml.dist'''
+</p>
+<pre class="brush:xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;phpunit bootstrap="tests/bootstrap.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         strict="true"
+         verbose="true"
+         timeoutForSmallTests="5"&gt;
+  &lt;testsuites&gt;
+    &lt;testsuite name="BankAccount"&gt;
+      &lt;directory suffix="Test.php"&gt;tests/framework&lt;/directory&gt;
+      &lt;directory suffix="Test.php"&gt;tests/application/unit&lt;/directory&gt;
+      &lt;directory suffix="Test.php"&gt;tests/application/database&lt;/directory&gt;
+      &lt;directory suffix="Test.php"&gt;tests/application/edge-to-edge&lt;/directory&gt;
+      &lt;!--&lt;directory suffix="Test.php"&gt;tests/application/end-to-end&lt;/directory&gt;--&gt;
+    &lt;/testsuite&gt;
+  &lt;/testsuites&gt;
+
+  &lt;logging&gt;
+    &lt;log type="coverage-html" target="build/coverage" title="BankAccount"
+         charset="UTF-8" yui="true" highlight="true"
+         lowUpperBound="35" highLowerBound="70"/&gt;
+    &lt;log type="coverage-clover" target="build/logs/clover.xml"/&gt;
+    &lt;log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/&gt;
+  &lt;/logging&gt;
+
+  &lt;filter&gt;
+    &lt;whitelist addUncoveredFilesFromWhitelist="true"&gt;
+      &lt;directory suffix=".php"&gt;src&lt;/directory&gt;
+      &lt;exclude&gt;
+        &lt;directory&gt;src/application/testing&lt;/directory&gt;
+        &lt;directory&gt;src/framework/testing&lt;/directory&gt;
+        &lt;file&gt;src/application/autoload.php&lt;/file&gt;
+        &lt;file&gt;src/application/bootstrap.php&lt;/file&gt;
+        &lt;file&gt;src/framework/autoload.php&lt;/file&gt;
+      &lt;/exclude&gt;
+    &lt;/whitelist&gt;
+  &lt;/filter&gt;
+
+  &lt;selenium&gt;
+    &lt;browser name="Firefox on localhost"
+             browser="*chrome"
+             host="localhost"
+             port="4444"
+             timeout="30000"/&gt;
+  &lt;/selenium&gt;
+&lt;/phpunit&gt;
+</pre>
+<p>
+'''build/phpcs.xml'''
+</p>
+<pre class="brush:xml">
+&lt;?xml version="1.0"?&gt;
+&lt;ruleset name="Sebastian"&gt;
+ &lt;description&gt;Sebastian Bergmann's coding standard&lt;/description&gt;
+
+ &lt;rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.JumbledIncrementer"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/&gt;
+
+ &lt;rule ref="Generic.Commenting.Todo"/&gt;
+
+ &lt;rule ref="Generic.ControlStructures.InlineControlStructure"/&gt;
+
+ &lt;rule ref="Generic.Files.LineEndings"/&gt;
+
+ &lt;rule ref="Generic.Formatting.DisallowMultipleStatements"/&gt;
+ &lt;rule ref="Generic.Formatting.MultipleStatementAlignment"/&gt;
+ &lt;rule ref="Generic.Formatting.NoSpaceAfterCast"/&gt;
+
+ &lt;rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman"/&gt;
+ &lt;rule ref="PEAR.Functions.ValidDefaultValue"/&gt;
+
+ &lt;rule ref="Generic.NamingConventions.ConstructorName"/&gt;
+ &lt;rule ref="Generic.NamingConventions.UpperCaseConstantName"/&gt;
+ &lt;rule ref="PEAR.NamingConventions.ValidClassName"/&gt;
+
+ &lt;rule ref="Generic.PHP.DisallowShortOpenTag"/&gt;
+ &lt;rule ref="Generic.PHP.NoSilencedErrors"/&gt;
+ &lt;rule ref="Generic.PHP.UpperCaseConstant"/&gt;
+
+ &lt;rule ref="Generic.WhiteSpace.DisallowTabIndent"/&gt;
+ &lt;rule ref="Generic.WhiteSpace.ScopeIndent"/&gt;
+ &lt;rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/&gt;
+&lt;/ruleset&gt;
+</pre>
+<p>
+'''build/phpmd.xml'''
+</p>
+<pre class="brush:xml">
+&lt;?xml version="1.0"?&gt;
+&lt;ruleset name="Sebastian"&gt;
+ &lt;description&gt;Sebastian Bergmann's coding standard&lt;/description&gt;
+
+ &lt;rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.JumbledIncrementer"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/&gt;
+ &lt;rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/&gt;
+
+ &lt;rule ref="Generic.Commenting.Todo"/&gt;
+
+ &lt;rule ref="Generic.ControlStructures.InlineControlStructure"/&gt;
+
+ &lt;rule ref="Generic.Files.LineEndings"/&gt;
+
+ &lt;rule ref="Generic.Formatting.DisallowMultipleStatements"/&gt;
+ &lt;rule ref="Generic.Formatting.MultipleStatementAlignment"/&gt;
+ &lt;rule ref="Generic.Formatting.NoSpaceAfterCast"/&gt;
+
+ &lt;rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman"/&gt;
+ &lt;rule ref="PEAR.Functions.ValidDefaultValue"/&gt;
+
+ &lt;rule ref="Generic.NamingConventions.ConstructorName"/&gt;
+ &lt;rule ref="Generic.NamingConventions.UpperCaseConstantName"/&gt;
+ &lt;rule ref="PEAR.NamingConventions.ValidClassName"/&gt;
+
+ &lt;rule ref="Generic.PHP.DisallowShortOpenTag"/&gt;
+ &lt;rule ref="Generic.PHP.NoSilencedErrors"/&gt;
+ &lt;rule ref="Generic.PHP.UpperCaseConstant"/&gt;
+
+ &lt;rule ref="Generic.WhiteSpace.DisallowTabIndent"/&gt;
+ &lt;rule ref="Generic.WhiteSpace.ScopeIndent"/&gt;
+ &lt;rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/&gt;
+&lt;/ruleset&gt;
+</pre>
+
+				</div>
+			</div>
+			<hr>
+			<div id="disqus_thread"></div>
+			<script type="text/javascript">
+			/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+			var disqus_shortname = 'yiqungithubio'; // required: replace example with your forum shortname
+
+			/* * * DON'T EDIT BELOW THIS LINE * * */
+			(function() {
+				 var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				 dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+				 (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+			 })();
+			</script>
+			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		</div>
+	</body>
+</html>

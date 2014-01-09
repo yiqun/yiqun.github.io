@@ -1,0 +1,4 @@
+{{{class="brush:bash"
+	#移动pdf文件到books目录，过滤掉"xxx.pdf"
+	ls *.pdf| grep -v 'xxx.pdf'| xargs -I '{}' mv '{}' books/
+  }}}

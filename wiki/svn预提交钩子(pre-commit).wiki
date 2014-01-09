@@ -1,0 +1,109 @@
+实现：UTF-8文件编码检测, PHP语法检测，JS语法检测
+# 安装PHP，安装过程略
+# 安装JS
+	{{{class="brush:bash"
+			#Ubuntu
+			sudo apt-get install spidermonkey-bin
+			#CentOS
+			curl -O http://ftp.mozilla.org/pub/mozilla.org/js/js-1.7.0.tar.gz
+			tar zxvf js-1.7.0.tar.gz
+			cd js/src
+			make -f Makefile.ref
+			mv Linux_All_DBG.OBJ/js /usr/local/bin/
+		}}}
+# 配置JSLINT
+	{{{class="brush:bash"
+			#Ubuntu下js路径由/usr/local/bin/js改为/usr/bin/js
+			curl -o /usr/local/bin/jslint https://github.com/douglascrockford/JSLint/blob/master/jslint.js
+			chmod +x /usr/local/bin/jslint
+			echo -e '#!/usr/local/bin/js\nif(typeof Object.create==="undefined"){Object.create=function(o){function F(){}F.prototype=o;return new F()}}if(!Object.keys){Object.keys=(function(){var hasOwnProperty=Object.prototype.hasOwnProperty,hasDontEnumBug=!({toString:null}).propertyIsEnumerable("toString"),dontEnums=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],dontEnumsLength=dontEnums.length;return function(obj){if(typeof obj!=="object"&&typeof obj!=="function"||obj===null){throw new TypeError("Object.keys called on non-object")}var result=[];for(var prop in obj){if(hasOwnProperty.call(obj,prop)){result.push(prop)}}if(hasDontEnumBug){for(var i=0;i<dontEnumsLength;i++){if(hasOwnProperty.call(obj,dontEnums[i])){result.push(dontEnums[i])}}}return result}})()};\n' | cat - /usr/local/bin/jslint > ~tmp && mv -f ~tmp /usr/local/bin/jslint
+			echo -e '\nvar src=(function(args){if(args.length>0){var str="";for(var i=0;i<args.length;i++){str+=args[i]}return str}return""})(arguments);JSLINT(src,{browser:true,indent:2});var ers=JSLINT.errors,ersl=ers.length;if(ersl>0){var e=ers[0];print((e.reason.substr(-1)=="."?e.reason.substr(0,e.reason.length-1):e.reason)+" - on line "+e.line)};' >> /usr/local/bin/jslint
+		}}}
+# 配置pre-commit
+	{{{class="brush:php"
+#!/usr/bin/php
+<?php
+
+// Set these manually since Subversion doesn't set ENV
+$PHP = '/usr/bin/php';
+$JSLINT = '/usr/local/bin/jslint';
+$SVNLOOK = '/usr/bin/svnlook';
+$AWK = '/usr/bin/awk';
+$GREP = '/bin/egrep';
+$SED = '/bin/sed';
+
+$REPOS = $argv[1];
+$TXN = $argv[2];
+
+// Find the changes
+$CHANGED=`$SVNLOOK changed -t "$TXN" "$REPOS" | $GREP "^[U|A]" | $AWK '{print $2}'`;
+// As an array
+$CHANGED = explode("\n",trim(rtrim($CHANGED)));
+
+$errors = Array();
+
+/**
+ * Detects the end-of-line character of a string.
+ * @param string $str The string to check.
+ * @return boolean
+ */
+function detectLF($str){
+        $es = array_count_values(str_split(preg_replace("/[^\r\n]/", "", $str)));
+        $ea = array_keys($es, max($es));
+        return in_array(bin2hex(implode("", $ea)),array("000a", "0a"));
+}
+
+// Perform specific actions based on the file extension 
+foreach($CHANGED as $FILE){
+        $ext = pathinfo($FILE,PATHINFO_EXTENSION);
+        $outputs = array();
+
+        // Detect encoding, eol, tab
+        if (in_array($ext, array('txt', 'html', 'xml', 'js', 'css', 'php', 'ini'))){
+                $content = shell_exec("$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'");
+                // Detect encoding
+                if (!mb_detect_encoding($content, 'UTF-8', TRUE)){
+                        $errors[] = "Only UTF-8 files can be committed ('$FILE')";
+                        continue;
+                }
+                // Detect eol
+                if (!detectLF($content)){
+                        $errors[] = "File EOL must use LF ('$FILE')";
+                        continue;
+                }
+                // Detect tab
+                if (preg_match('/\t/is', $content)){
+                        $errors[] = "$FILE contains 'Tab' character";
+                        continue;
+                }
+                // Detect syntax
+                $outputs = array();
+                switch($ext){
+                        case 'php':
+                                $msg = exec("$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE' | $PHP -l 2>&1", $outputs);
+                                array_pop($outputs);
+                                foreach ($outputs as $op) {
+                                        $errors[] = $FILE. ':'.$op;
+                                }                        break;
+                        case 'js':
+                                $msg = exec("$JSLINT \"`$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`\" 2>&1", $outputs);
+                                foreach ($outputs as $op) {
+                                        $errors[] = $FILE.':'.$op;
+                                }
+                                break;
+                }
+        }
+}
+
+// Print all the errors in a nice list
+if(count($errors) > 0){
+        error_log("\n**********************************************************************\n Please correct the following errors before commiting these changes \n**********************************************************************\n");
+        for($i = 1;$i <= count($errors);$i++){
+                error_log("$i. " . $errors[($i - 1)]);
+        }
+
+        exit(-1);
+}
+
+exit(0);
+}}}

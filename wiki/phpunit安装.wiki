@@ -1,0 +1,18 @@
+{{{class="brush:bash"
+	sudo pear install phpunit/PHPUnit
+	#No releases for package "phpunit/PHPUnit" exist
+	#install failed
+	sudo pear update-channels
+	sudo pear clear-cache
+	sudo pear install phpunit/PHPUnit
+  }}}
+  
+- 错误
+ {{{
+	PHP Warning:  require_once(File/Iterator/Autoload.php): failed to open stream: \ 
+	No such file or directory in /usr/lib/php/pear/PHPUnit/Autoload.php on line 64
+   }}}
+ 解决方案, 在php.ini文件的include_path添加pear路径
+ {{{
+	include_path = ".:/php/includes:/usr/lib/php/pear/"
+  }}}

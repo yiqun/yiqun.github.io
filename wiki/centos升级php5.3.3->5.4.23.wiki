@@ -1,0 +1,15 @@
+以6.4_x64为例
+- 添加Remi仓库
+{{{class="brush:bash"
+wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rpm -ivh epel-release-6-8.noarch.rpm
+yum update
+rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+}}}
+可参考http://linuxdrops.com/how-to-add-epel-and-remi-repository-to-centos/
+
+- 更新php
+{{{class="brush:bash"
+yum --enablerepo=remi,remi-test install httpd php php-common
+yum --enablerepo=remi,remi-test install php-pecl-apc php-cli php-pear php-pdo php-mysql php-pgsql php-pecl-mongo php-sqlite php-pecl-memcache php-pecl-memcached php-gd php-mbstring php-mcrypt php-xml
+}}}

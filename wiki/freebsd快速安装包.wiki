@@ -1,0 +1,3 @@
+{{{class="brush:bash"
+	pkg_add -rv PACKAGE_NAME
+  }}}
