@@ -33,6 +33,7 @@ pear install --alldeps pear.phpunit.de/phploc
 #安装phpunit
 pear install --alldeps pear.phpunit.de/PHPUnit
 pear install --alldeps pear.phpunit.de/DbUnit
+pear install --alldeps phpunit/PHPUnit_Selenium
 
 #安装phpmd
 pear channel-discover pear.phpmd.org
@@ -48,7 +49,7 @@ pear install pear/MDB2#mysql
 #安装phpcpd
 pear install --alldeps pear.phpunit.de/phpcpd
 
-#安装phpcdc
+#安装phpdcd
 pear install --alldeps pear.phpunit.de/phpdcd-0.9.3
 }}}
 

@@ -154,7 +154,7 @@ if (strlen($comment) &lt; 6){
 
                 // Detect encoding, eol, tab
                 if (in_array($ext, array('txt', 'html', 'xml', 'js', 'css', 'php', 'ini', 'csv', 'xls', 'xlst', 'property', 'properties'))){
-                        $content = shell_exec("$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'");
+                        $content = `$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`;
                         // Detect encoding
                         if (!mb_detect_encoding($content, 'UTF-8', TRUE)){
                                 $errors[] = "Only UTF-8 files can be committed ('$FILE')";
@@ -167,7 +167,7 @@ if (strlen($comment) &lt; 6){
                         // Detect tab
                         $contents = explode("\n", $content);
                         $contents_length = count($contents);
-                        for($ii=1;$ii&lt;=$contents;$ii++){
+                        for($ii=1;$ii&lt;=$contents_length;$ii++){
                             if (preg_match('/\t/is', $contents[$ii-1])){
                                 $errors[] = "$FILE contains 'Tab' character - on line $ii";
                                 continue 2;
