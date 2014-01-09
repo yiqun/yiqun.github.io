@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
 		<meta name="google-site-verification" content="ZHIKwo-o2HQJwtZ9Bt_S8Yt7_rq7ECBEM7HMEToXBck" />
-		<title>低端VPS</title>
+		<title>windows查看主板支持的最大内存容量</title>
 		<link type="text/css" rel="stylesheet" href="style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/style.css" /> 
 		<link type="text/css" rel="stylesheet" href="static/css/shCore.css" /> 
@@ -69,14 +69,17 @@
 	</head>
 	<body>
 		<div id="wrap">
-			<h4 id="title">低端VPS</h4>
+			<h4 id="title">windows查看主板支持的最大内存容量</h4>
 			<hr>
 			<script type="text/javascript">onload();</script>
 			<div id="content">
 				<div id="article">
 					
+<pre>
+wmic memphysical get maxcapacity
+</pre>
 <p>
-<a href="https://www.digitalocean.com/pricing">https://www.digitalocean.com/pricing</a>
+以上得出的数字/1024/1024即得出G数
 </p>
 
 				</div>

@@ -11,6 +11,7 @@
 * [[macos安装pear]]
 * [[移动文件过滤]]
 * [[yii2.0笔记]]
+* [[windows查看主板支持的最大内存容量]]
 * [[centos JAVA_HOME]]
 * [[不明其义的命令]]
 * [[服务器安装Virtualbox(无GUI)]]
