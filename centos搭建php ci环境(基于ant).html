@@ -111,6 +111,7 @@ pear install --alldeps pear.phpunit.de/phploc
 pear install --alldeps pear.phpunit.de/PHPUnit
 pear install --alldeps pear.phpunit.de/DbUnit
 pear install --alldeps phpunit/PHPUnit_Selenium
+pear install --alldeps phpunit/PHPUnit_Story
 
 #安装phpmd
 pear channel-discover pear.phpmd.org
@@ -1005,40 +1006,67 @@ GitHub Plugin(按需)
 </p>
 <pre class="brush:xml">
 &lt;?xml version="1.0"?&gt;
-&lt;ruleset name="Sebastian"&gt;
+&lt;!--&lt;ruleset name="Sebastian"&gt;
  &lt;description&gt;Sebastian Bergmann's coding standard&lt;/description&gt;
-
+ 
  &lt;rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/&gt;
  &lt;rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/&gt;
  &lt;rule ref="Generic.CodeAnalysis.JumbledIncrementer"/&gt;
  &lt;rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/&gt;
  &lt;rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/&gt;
  &lt;rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/&gt;
-
+ 
  &lt;rule ref="Generic.Commenting.Todo"/&gt;
-
+ 
  &lt;rule ref="Generic.ControlStructures.InlineControlStructure"/&gt;
-
+ 
  &lt;rule ref="Generic.Files.LineEndings"/&gt;
-
+ 
  &lt;rule ref="Generic.Formatting.DisallowMultipleStatements"/&gt;
  &lt;rule ref="Generic.Formatting.MultipleStatementAlignment"/&gt;
  &lt;rule ref="Generic.Formatting.NoSpaceAfterCast"/&gt;
-
+ 
  &lt;rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman"/&gt;
  &lt;rule ref="PEAR.Functions.ValidDefaultValue"/&gt;
-
+ 
  &lt;rule ref="Generic.NamingConventions.ConstructorName"/&gt;
  &lt;rule ref="Generic.NamingConventions.UpperCaseConstantName"/&gt;
  &lt;rule ref="PEAR.NamingConventions.ValidClassName"/&gt;
-
+ 
  &lt;rule ref="Generic.PHP.DisallowShortOpenTag"/&gt;
  &lt;rule ref="Generic.PHP.NoSilencedErrors"/&gt;
  &lt;rule ref="Generic.PHP.UpperCaseConstant"/&gt;
-
+ 
  &lt;rule ref="Generic.WhiteSpace.DisallowTabIndent"/&gt;
  &lt;rule ref="Generic.WhiteSpace.ScopeIndent"/&gt;
  &lt;rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/&gt;
+&lt;/ruleset&gt;--&gt;
+
+&lt;ruleset name="Example mess detection"
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"&gt;
+    &lt;description&gt;Example mess detection ruleset&lt;/description&gt;
+
+    &lt;rule ref="rulesets/codesize.xml" /&gt;
+    &lt;!--&lt;rule ref="rulesets/codesize.xml/NPathComplexity" /&gt;--&gt;
+
+    &lt;rule ref="rulesets/design.xml/ExitExpression" /&gt;
+    &lt;rule ref="rulesets/design.xml/EvalExpression" /&gt;
+    &lt;rule ref="rulesets/design.xml/GotoStatement" /&gt;
+    &lt;rule ref="rulesets/design.xml/DepthOfInheritance" /&gt;
+    &lt;rule ref="rulesets/design.xml/CouplingBetweenObjects" /&gt;
+
+    &lt;rule ref="rulesets/naming.xml/LongVariable" /&gt;
+    &lt;rule ref="rulesets/naming.xml/ShortMethodName" /&gt;
+    &lt;rule ref="rulesets/naming.xml/ConstructorWithNameAsEnclosingClass" /&gt;
+    &lt;rule ref="rulesets/naming.xml/ConstantNamingConventions" /&gt;
+
+    &lt;rule ref="rulesets/unusedcode.xml/UnusedFormalParameter" /&gt;
+    &lt;!--&lt;rule ref="rulesets/unusedcode.xml/UnusedLocalVariable" /&gt;--&gt;
+    &lt;rule ref="rulesets/unusedcode.xml/UnusedPrivateField" /&gt;
+    &lt;rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod" /&gt;
 &lt;/ruleset&gt;
 </pre>
 
