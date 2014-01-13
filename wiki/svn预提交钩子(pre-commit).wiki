@@ -33,6 +33,8 @@ $SVNLOOK = '/usr/bin/svnlook';
 $AWK = '/usr/bin/awk';
 $GREP = '/bin/egrep';
 $SED = '/bin/sed';
+$PHPCS = '/usr/bin/phpcs';
+$PHPCSCONF = '/var/www/svn/conf/phpcs.xml';
 
 $REPOS = $argv[1];
 $TXN = $argv[2];
@@ -94,7 +96,18 @@ if (strlen($comment) < 6){
                                         array_pop($outputs);
                                         foreach ($outputs as $op) {
                                                 $errors[] = $FILE. ':'.$op;
-                                        }                        break;
+                                        }
+                                        // phpcs
+                                        $msg = `$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE' | $PHPCS --standard=$PHPCSCONF`;
+                                        if ($msg) {
+                                            preg_match_all('/\s*(\d+)\s\|\s*(ERROR|WARNING)\s*\|(.*)/i', $msg, $matchs);
+                                            if (count($matchs[1])){
+                                                foreach($matchs[1] as $k=>$match){
+                                                    $errors[] = $matchs[2][$k].': '. $matchs[3][$k]. ' on line '. $match;
+                                                }
+                                            }
+                                        } 
+																				break;
                                 case 'js':
                                         $msg = exec("$JSLINT \"`$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`\" 2>&1", $outputs);
                                         foreach ($outputs as $op) {
