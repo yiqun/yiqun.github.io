@@ -131,3 +131,56 @@ if(count($errors) > 0){
 
 exit(0);
 }}}
+
+phpcs.xml
+{{{class="brush:xml"
+<ruleset name="Custom coding standard">
+ <description>Andrew Li's coding standard</description>
+ 
+ <rule ref="PEAR"/>
+ <rule ref="PEAR.WhiteSpace.ScopeIndent">
+   <properties>
+	   <property name="indent" value="2"/>
+	 </properties>
+ </rule>
+</ruleset>
+	}}}
+	
+额外
+- PHP文档注释标准
+{{{
+/**
+ * Test php file
+ *
+ * PHP version 5
+ *
+ * @category Test
+ * @package  Test
+ * @author   Andrew Li <tinray1024@gmail.com>
+ * @license  http://yiqun.github.io Andrew Li
+ * @version  $Rev: 33 $ 
+ * @link     http://yiqun.github.io
+ * @modified $Author: andrew $
+ * @since    $Date: 2014-02-07 16:13:51 +0800 (Fri, 07 Feb 2014) $
+ */
+	}}}
+- 给beta版静态文件附加版本信息，stable版则去掉
+{{{class="brush:php"
+define('MODE', 'BETA'); // STABLE
+/**
+ * Process svn $,Rev and last $
+ *
+ * @param string $rev Svn reversion string
+ *
+ * @return string
+ */
+function ProcessSvnChars($rev)
+{
+  return MODE == 'STABLE'? '': '?v='. substr(substr($rev, 6), 0, -2);
+}
+
+// script
+/*
+<script type="text/javascript" src="/path/to/js/file<?php echo ProcessSvnChars('$Rev$')?>"></script>
+*/
+}}}

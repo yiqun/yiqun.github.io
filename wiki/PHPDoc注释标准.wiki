@@ -1,0 +1,29 @@
+源文档：http://en.wikipedia.org/wiki/Phpdoc
+| 标记        | 用途                       | 描述                                 |
+|-------------|----------------------------|--------------------------------------|
+| @abstract   |                            | 抽象类的变量和方法                   |
+| @access     | public, private, protected | 文档的访问、使用权限                 |
+| @author     | 李四 <lisi@126.com>        | 文档作者                             |
+| @copyright  | 名称 时间                  | 文档版权                             |
+| @deprecated | version                    | 文档中被废除的方法                   |
+| @deprec     |                            | 同@deprecated                        |
+| @example    | /path/to/example           | 示例文档路径                         |
+| @exception  |                            | 文档中方法抛出的异常，可参考@throws  |
+| @global     |                            | 全局变量                             |
+| @ignore     |                            | 忽略制定的关键字                     |
+| @internal   |                            | 内部信息                             |
+| @link       | URL                        | 链接地址                             |
+| @name       | 变量别名                   | 为某个变量指定别名                   |
+| @magic      |                            | phpdoc.de compatibility              |
+| @package    | 封装包的名称               | 一组相关类、函数封装包名称           |
+| @param      | 类型 变量名 描述           | 变量名                               |
+| @return     |                            | 返回类型                             |
+| @see        | 如 Class Login ()          | 文档关联的任何元素                   |
+| @since      | version                    | 记录什么时候对文档的哪部分进行了更改 |
+| @static     |                            | 静态变量、方法                       |
+| @staticvar  |                            | 类、函数中使用的静态变量             |
+| @subpackage |                            | 子版本                               |
+| @throws     |                            | 某一方法抛出的异常                   |
+| @todo       |                            | 待完善的说明                         |
+| @var        |                            | 文档中的变量及其类型                 |
+| @version    |                            | 文档、类、函数的版本信息             |

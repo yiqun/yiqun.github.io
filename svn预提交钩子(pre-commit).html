@@ -221,6 +221,69 @@ exit(0);
 
 </ol>
 
+<p>
+phpcs.xml
+</p>
+<pre class="brush:xml">
+&lt;ruleset name="Custom coding standard"&gt;
+ &lt;description&gt;Andrew Li's coding standard&lt;/description&gt;
+ 
+ &lt;rule ref="PEAR"/&gt;
+ &lt;rule ref="PEAR.WhiteSpace.ScopeIndent"&gt;
+   &lt;properties&gt;
+	   &lt;property name="indent" value="2"/&gt;
+	 &lt;/properties&gt;
+ &lt;/rule&gt;
+&lt;/ruleset&gt;
+</pre>
+	
+<p>
+额外
+</p>
+<ul>
+<li>
+PHP文档注释标准
+<pre>
+/**
+ * Test php file
+ *
+ * PHP version 5
+ *
+ * @category Test
+ * @package  Test
+ * @author   Andrew Li &lt;tinray1024@gmail.com&gt;
+ * @license  http://yiqun.github.io Andrew Li
+ * @version  $Rev: 33 $ 
+ * @link     http://yiqun.github.io
+ * @modified $Author: andrew $
+ * @since    $Date: 2014-02-07 16:13:51 +0800 (Fri, 07 Feb 2014) $
+ */
+</pre>
+
+<li>
+给beta版静态文件附加版本信息，stable版则去掉
+<pre class="brush:php">
+define('MODE', 'BETA'); // STABLE
+/**
+ * Process svn $,Rev and last $
+ *
+ * @param string $rev Svn reversion string
+ *
+ * @return string
+ */
+function ProcessSvnChars($rev)
+{
+  return MODE == 'STABLE'? '': '?v='. substr(substr($rev, 6), 0, -2);
+}
+
+// script
+/*
+&lt;script type="text/javascript" src="/path/to/js/file&lt;?php echo ProcessSvnChars('$Rev$')?&gt;"&gt;&lt;/script&gt;
+*/
+</pre>
+
+</ul>
+
 				</div>
 			</div>
 			<hr>
