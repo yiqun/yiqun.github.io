@@ -1,0 +1,4 @@
+{{{class="brush:html"
+	<link rel="icon" href="http://www.example.com/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="http://www.example.com/favicon.ico" type="image/x-icon" />
+	}}}

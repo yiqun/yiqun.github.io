@@ -1,0 +1,8 @@
+{{{
+  locale-gen en_US.UTF-8
+  }}}
+  
+然后在hook里
+{{{
+  export LC_CTYPE=en_US.UTF-8 
+  }}}
