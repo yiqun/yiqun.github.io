@@ -43,8 +43,7 @@ pear install --alldeps phpmd/PHP_PMD
 
 #安装phpcb
 pear install Text_Highlighter-0.7.3
-pear channel-discover pear.phpqatools.org
-pear install --alldeps phpqatools/PHP_CodeBrowser
+pear install --alldeps phpunit/PHP_CodeBrowser
 pear install pear/MDB2#mysql
 
 #安装phpcpd

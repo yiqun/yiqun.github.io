@@ -1,0 +1,4 @@
+- 自定义seo内容在layout显示
+  - 在控制器定义 public $title, $keywords, $description;
+  - 设置值
+  - 在layout使用 $this->title, $this->keywords, $this->description 引用

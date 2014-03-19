@@ -23,9 +23,8 @@
 	{{{class="brush:php"
 #!/usr/bin/php
 <?php
-set_time_limit(0);
 error_reporting(7);
-
+set_time_limit(0);
 // Set these manually since Subversion doesn't set ENV
 $PHP = '/usr/bin/php';
 $JSLINT = '/usr/local/bin/jslint';
@@ -35,6 +34,12 @@ $GREP = '/bin/egrep';
 $SED = '/bin/sed';
 $PHPCS = '/usr/bin/phpcs';
 $PHPCSCONF = '/var/www/svn/conf/phpcs.xml';
+$IGNORERULES = array(
+  '.jpg', '.jpeg', '.png', '.gif',
+  '.csv', '.xls', '.xlst', '.property', '.properties',
+  'plugins/', 'vendor/'
+  //array('regexp', '/index\.php/')
+);
 
 $REPOS = $argv[1];
 $TXN = $argv[2];
@@ -42,94 +47,134 @@ $TXN = $argv[2];
 $errors = Array();
 
 // Check comment
-$comment = shell_exec("$SVNLOOK log -t '$TXN' '$REPOS'");
-if (strlen($comment) < 6){
-        $errors[] = 'Please provide a meaningful comment when committing changes';
-} else {
-        // Find the changes
-        $CHANGED=`$SVNLOOK changed -t "$TXN" "$REPOS" | $GREP "^[U|A]" | $AWK '{print $2}'`;
-        // As an array
-        $CHANGED = explode("\n",trim(rtrim($CHANGED)));
+$comment_length = `$SVNLOOK log -t '$TXN' '$REPOS'`;
+if (strlen($comment_length) < 6){ 
+  $errors[] = 'Please provide a meaningful comment when committing changes';
+}
 
-        /**
-         * Detects the end-of-line character of a string.
-         * @param string $str The string to check.
-         * @return boolean
-         */
-        function detectLF($str){
-                $es = array_count_values(str_split(preg_replace("/[^\r\n]/", "", $str)));
-                $ea = array_keys($es, max($es));
-                return in_array(bin2hex(implode("", $ea)),array("000a", "0a"));
+
+else {
+
+  // Find the changes
+  $CHANGED=`$SVNLOOK changed -t "$TXN" "$REPOS" | $GREP "^[U|A]" | $AWK '{print $2}'`;
+  // As an array
+  $CHANGED = explode("\n",trim(rtrim($CHANGED)));
+
+  /** 
+   * Detects the end-of-line character of a string.
+   * @param string $str The string to check.
+   * @return boolean
+   */
+  function detectLF($str){
+    $es = array_count_values(str_split(preg_replace("/[^\r\n]/", "", $str)));
+    $ea = array_keys($es, max($es));
+    return in_array(bin2hex(implode("", $ea)),array("000a", "0a"));
+  }
+
+  // Perform specific actions based on the file extension 
+  foreach($CHANGED as $FILE){
+
+    // skip ignore list
+    if (!empty($IGNORERULES)) {
+      foreach ($IGNORERULES as $in) {
+        if (is_string($in)) {
+          if ('/' === substr($in, 0, 1)) {
+            if (0 === strcasecmp("/$FILE", $in)) {
+              continue 2;
+            }
+          } elseif (FALSE !== stripos($FILE, $in)) {
+            continue 2;
+          }
+        } elseif (is_array($in) && !empty($in[0]) && !empty($in[1]) && 'regexp' == $in[0]) {
+          try {
+            $match = preg_match($in[1], $FILE);
+            if ($match) {
+              continue 2;
+            }
+          } catch (Exception $e){
+          }
         }
+      }
+    }
 
-        // Perform specific actions based on the file extension 
-        foreach($CHANGED as $FILE){
-                $ext = pathinfo($FILE,PATHINFO_EXTENSION);
-                $outputs = array();
 
-                // Detect encoding, eol, tab
-                if (in_array($ext, array('txt', 'html', 'xml', 'js', 'css', 'php', 'ini', 'csv', 'xls', 'xlst', 'property', 'properties'))){
-                        $content = `$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`;
-                        // Detect encoding
-                        if (!mb_detect_encoding($content, 'UTF-8', TRUE)){
-                                $errors[] = "Only UTF-8 files can be committed ('$FILE')";
-                                continue;
-                        }
-                        if (!detectLF($content)){
-                                $errors[] = "File EOL must use LF ('$FILE')";
-                                continue;
-                        }
-                        // Detect tab
-                        $contents = explode("\n", $content);
-                        $contents_length = count($contents);
-                        for($ii=1;$ii<=$contents_length;$ii++){
-                            if (preg_match('/\t/is', $contents[$ii-1])){
-                                $errors[] = "$FILE contains 'Tab' character - on line $ii";
-                                continue 2;
-                            }   
-                        } 
-                        // Detect syntax
-                        $outputs = array();
-                        switch($ext){
-                                case 'php':
-                                        $msg = exec("$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE' | $PHP -l 2>&1", $outputs);
-                                        array_pop($outputs);
-                                        foreach ($outputs as $op) {
-                                                $errors[] = $FILE. ':'.$op;
-                                        }
-                                        // phpcs
-                                        $msg = `$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE' | $PHPCS --standard=$PHPCSCONF`;
-                                        if ($msg) {
-                                            preg_match_all('/\s*(\d+)\s\|\s*(ERROR|WARNING)\s*\|(.*)/i', $msg, $matchs);
-                                            if (count($matchs[1])){
-                                                foreach($matchs[1] as $k=>$match){
-                                                    $errors[] = $matchs[2][$k].': '. $matchs[3][$k]. ' on line '. $match;
-                                                }
-                                            }
-                                        } 
-																				break;
-                                case 'js':
-                                        $msg = exec("$JSLINT \"`$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`\" 2>&1", $outputs);
-                                        foreach ($outputs as $op) {
-                                                $errors[] = $FILE.':'.$op;
-                                        }
-                                        break;
-                        }
-                }
+    // Get extension
+    $ext = pathinfo($FILE,PATHINFO_EXTENSION);
+
+    $outputs = array();
+
+    /**
+     * Detect encoding, eol, tab, syntax
+     */
+    $content = `$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`;
+
+    // Detect encoding
+    if (!mb_detect_encoding($content, 'UTF-8', TRUE)){
+      $errors[] = "Only UTF-8 files can be committed ('$FILE')";
+    }
+
+    // Detect eol
+    if (!detectLF($content)){
+      $errors[] = "File EOL must use LF ('$FILE')";
+    }
+
+    // Detect tab
+    $contents = explode("\n", $content);
+    $contents_length = count($contents);
+    for($ii=1;$ii<=$contents_length;$ii++){
+      if (preg_match('/\t/is', $contents[$ii-1])){
+        $errors[] = "$FILE contains 'Tab' character - on line $ii";
+      }
+    }
+
+    // Detect syntax
+    $outputs = array();
+
+    switch($ext){
+
+    case 'php':
+      $msg = exec("$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE' | $PHP -l 2>&1", $outputs);
+      array_pop($outputs);
+      foreach ($outputs as $op) {
+        $errors[] = $FILE. ': {{ '.$op. ' }}';
+      }
+
+      if (count($outputs)) {
+        break;
+      }
+
+      // phpcs
+      $msg = exec("$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE' | $PHPCS -n --standard=$PHPCSCONF 2>&1", $outputs);
+
+      if (count($outputs)) {
+        foreach ($outputs as $op) {
+          preg_match('/^\s*(\d+)\s*\|\s*(ERROR|WARNING)\s*\|(.*)$/i', $op, $match);
+          if (count($match)){
+            $errors[] = $FILE. ': {{ '. $match[2]. $match[3]. ' on line '. $match[1]. ' }}';
+          }
         }
+      }
+
+      break;
+
+    case 'js':
+      $msg = exec("$JSLINT \"`$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`\" 2>&1", $outputs);
+      foreach ($outputs as $op) {
+        $errors[] = $FILE.': {{ '.$op.' }}';
+      }
+      break;
+    }
+  }
 }
 
 // Print all the errors in a nice list
 if(count($errors) > 0){
-        error_log("**********************************************************************\n Please correct the following errors before commiting these changes \n**********************************************************************");
-        for($i = 1;$i <= count($errors);$i++){
-                error_log("$i. " . $errors[($i - 1)]);
-        }
-
-        exit(-1);
+  error_log("**********************************************************************\n Please correct the following errors before commiting these changes \n**********************************************************************");
+  for($i = 1;$i <= count($errors);$i++){
+    error_log("$i. " . $errors[($i - 1)]);
+  }
+  exit(-1);
 }
-
-exit(0);
 }}}
 
 phpcs.xml
