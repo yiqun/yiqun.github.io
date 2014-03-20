@@ -85,38 +85,37 @@
 <li>
 安装JS
 <pre class="brush:bash">
-			#Ubuntu
-			sudo apt-get install spidermonkey-bin
-			#CentOS
-			curl -O http://ftp.mozilla.org/pub/mozilla.org/js/js-1.7.0.tar.gz
-			tar zxvf js-1.7.0.tar.gz
-			cd js/src
-			make -f Makefile.ref
-			mv Linux_All_DBG.OBJ/js /usr/local/bin/
+#Ubuntu
+sudo apt-get install spidermonkey-bin
+#CentOS
+curl -O http://ftp.mozilla.org/pub/mozilla.org/js/js-1.7.0.tar.gz
+tar zxvf js-1.7.0.tar.gz
+cd js/src
+make -f Makefile.ref
+mv Linux_All_DBG.OBJ/js /usr/local/bin/
 </pre>
 
 <li>
 配置JSLINT
 <pre class="brush:bash">
-			#Ubuntu下js路径由/usr/local/bin/js改为/usr/bin/js
-			curl -o /usr/local/bin/jslint https://raw.github.com/douglascrockford/JSLint/master/jslint.js
-			chmod +x /usr/local/bin/jslint
-			echo -e '#!/usr/local/bin/js\nif(typeof Object.create==="undefined"){Object.create=function(o){function F(){}F.prototype=o;return new F()}}if(!Object.keys){Object.keys=(function(){var hasOwnProperty=Object.prototype.hasOwnProperty,hasDontEnumBug=!({toString:null}).propertyIsEnumerable("toString"),dontEnums=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],dontEnumsLength=dontEnums.length;return function(obj){if(typeof obj!=="object"&amp;&amp;typeof obj!=="function"||obj===null){throw new TypeError("Object.keys called on non-object")}var result=[];for(var prop in obj){if(hasOwnProperty.call(obj,prop)){result.push(prop)}}if(hasDontEnumBug){for(var i=0;i&lt;dontEnumsLength;i++){if(hasOwnProperty.call(obj,dontEnums[i])){result.push(dontEnums[i])}}}return result}})()};\n' | cat - /usr/local/bin/jslint &gt; ~tmp &amp;&amp; mv -f ~tmp /usr/local/bin/jslint
-			echo -e '\nvar src=(function(args){if(args.length&gt;0){var str="";for(var i=0;i&lt;args.length;i++){str+=args[i]}return str}return""})(arguments);JSLINT(src,{browser:true,indent:2});var ers=JSLINT.errors,ersl=ers.length;if(ersl&gt;0){var e=ers[0];print((e.reason.substr(-1)=="."?e.reason.substr(0,e.reason.length-1):e.reason)+" - on line "+e.line)};' &gt;&gt; /usr/local/bin/jslint
+#Ubuntu下js路径由/usr/local/bin/js改为/usr/bin/js
+curl -o /usr/local/bin/jslint https://raw.github.com/douglascrockford/JSLint/master/jslint.js
+chmod +x /usr/local/bin/jslint
+echo -e '#!/usr/local/bin/js\nif(typeof Object.create==="undefined"){Object.create=function(o){function F(){}F.prototype=o;return new F()}}if(!Object.keys){Object.keys=(function(){var hasOwnProperty=Object.prototype.hasOwnProperty,hasDontEnumBug=!({toString:null}).propertyIsEnumerable("toString"),dontEnums=["toString","toLocaleString","valueOf","hasOwnProperty","isPrototypeOf","propertyIsEnumerable","constructor"],dontEnumsLength=dontEnums.length;return function(obj){if(typeof obj!=="object"&amp;&amp;typeof obj!=="function"||obj===null){throw new TypeError("Object.keys called on non-object")}var result=[];for(var prop in obj){if(hasOwnProperty.call(obj,prop)){result.push(prop)}}if(hasDontEnumBug){for(var i=0;i&lt;dontEnumsLength;i++){if(hasOwnProperty.call(obj,dontEnums[i])){result.push(dontEnums[i])}}}return result}})()};\n' | cat - /usr/local/bin/jslint &gt; ~tmp &amp;&amp; mv -f ~tmp /usr/local/bin/jslint
+echo -e '\nvar src=(function(args){if(args.length&gt;0){var str="";for(var i=0;i&lt;args.length;i++){str+=args[i]}return str}return""})(arguments);JSLINT(src,{browser:true,indent:2});var ers=JSLINT.errors,ersl=ers.length;if(ersl&gt;0){var e=ers[0];print((e.reason.substr(-1)=="."?e.reason.substr(0,e.reason.length-1):e.reason)+" - on line "+e.line)};' &gt;&gt; /usr/local/bin/jslint
 </pre>
 
 <li>
-配置CSLINT
+配置CSSLINT
 <pre class="brush:bash">
-    curl -o /usr/local/bin/csslint https://raw.github.com/stubbornella/csslint/master/release/csslint.js
-    chmod +x /usr/local/bin/csslint
-    echo -e '#!/usr/local/bin/js\n' | cat - /usr/local/bin/csslint &gt; ~tmp &amp;&amp; mv -f ~tmp /usr/local/bin/csslint
-    #Rules路径 /var/www/svn/conf/csslint-rules/
-    #Rule参考 http://www.biaodianfu.com/css-lint.html
-    #Rules包依赖 https://raw.github.com/stubbornella/csslint/master/lib/yuitest.js
-    #Rules包地址 https://github.com/stubbornella/csslint/tree/master/src/rules
-    echo -e '\nvar rules="yuitest adjoining-classes duplicate-background-images font-faces known-properties selector-max universal-selector box-model duplicate-properties font-sizes outline-none shorthand unqualified-attributes box-sizing empty-rules gradients overqualified-elements star-property-hack vendor-prefix bulletproof-font-face errors ids qualified-headings text-indent zero-units compatible-vendor-prefixes fallback-colors important regex-selectors underscore-property-hack display-property-grouping floats import selector-max-approaching unique-headings".split(" "),
-i;for(i in rules)load("/var/www/svn/conf/csslint-rules/"+rules[i]+".js");var src=function(a){if(0&lt;a.length){for(var b="",c=0;c&lt;a.length;c++)b+=a[c];return b}return""}(arguments),messages=CSSLint.verify(src).messages;i=0;for(len=messages.length;i&lt;len;i++)print(messages[i].message+" (line "+messages[i].line+", col "+messages[i].col+")");' &gt;&gt; /usr/local/bin/csslint
+curl -o /usr/local/bin/csslint https://raw.github.com/stubbornella/csslint/master/release/csslint.js
+chmod +x /usr/local/bin/csslint
+echo -e '#!/usr/local/bin/js\n' | cat - /usr/local/bin/csslint &gt; ~tmp &amp;&amp; mv -f ~tmp /usr/local/bin/csslint
+#Rules路径 /var/www/svn/conf/csslint-rules/
+#Rule参考 http://www.biaodianfu.com/css-lint.html
+#Rules包依赖 https://raw.github.com/stubbornella/csslint/master/lib/yuitest.js
+#Rules包地址 https://github.com/stubbornella/csslint/tree/master/src/rules
+echo -e '\nvar rules="yuitest adjoining-classes duplicate-background-images font-faces known-properties selector-max universal-selector box-model duplicate-properties font-sizes outline-none shorthand unqualified-attributes box-sizing empty-rules gradients overqualified-elements star-property-hack vendor-prefix bulletproof-font-face errors ids qualified-headings text-indent zero-units compatible-vendor-prefixes fallback-colors important regex-selectors underscore-property-hack display-property-grouping floats import selector-max-approaching unique-headings".split(" "),i;for(i in rules)load("/var/www/svn/conf/csslint-rules/"+rules[i]+".js");var src=function(a){if(0&lt;a.length){for(var b="",c=0;c&lt;a.length;c++)b+=a[c];return b}return""}(arguments),messages=CSSLint.verify(src).messages;i=0;for(len=messages.length;i&lt;len;i++)print(messages[i].message+" (line "+messages[i].line+", col "+messages[i].col+")");' &gt;&gt; /usr/local/bin/csslint
 </pre>
 
 <li>
