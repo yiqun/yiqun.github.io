@@ -28,7 +28,7 @@ echo -e '#!/usr/local/bin/js\n' | cat - /usr/local/bin/csslint > ~tmp && mv -f ~
 #Rule参考 http://www.biaodianfu.com/css-lint.html
 #Rules包依赖 https://raw.github.com/stubbornella/csslint/master/lib/yuitest.js
 #Rules包地址 https://github.com/stubbornella/csslint/tree/master/src/rules
-echo -e '\nvar rules="yuitest adjoining-classes duplicate-background-images font-faces known-properties selector-max universal-selector box-model duplicate-properties font-sizes outline-none shorthand unqualified-attributes box-sizing empty-rules gradients overqualified-elements star-property-hack vendor-prefix bulletproof-font-face errors ids qualified-headings text-indent zero-units compatible-vendor-prefixes fallback-colors important regex-selectors underscore-property-hack display-property-grouping floats import selector-max-approaching unique-headings".split(" "),i;for(i in rules)load("/var/www/svn/conf/csslint-rules/"+rules[i]+".js");var src=function(a){if(0<a.length){for(var b="",c=0;c<a.length;c++)b+=a[c];return b}return""}(arguments),messages=CSSLint.verify(src).messages;i=0;for(len=messages.length;i<len;i++)print(messages[i].message+" (line "+messages[i].line+", col "+messages[i].col+")");' >> /usr/local/bin/csslint
+echo -e '\nvar src=function(a){if(0<a.length){for(var b="",c=0;c<a.length;c++)b+=a[c];return b}return""}(arguments),messages=CSSLint.verify(src).messages;i=0;for(len=messages.length;i<len;i++)print(messages[i].message+" (line "+messages[i].line+", col "+messages[i].col+")");' >> /usr/local/bin/csslint
 }}}
 # 配置pre-commit
 {{{class="brush:php"
@@ -61,12 +61,17 @@ $IGNORERULES = array(
 $REPOS = $argv[1];
 $TXN = $argv[2];
 
-$errors = Array();
+function report($log) {
+  static $LOG = array();
+  if ($log === 'getData') return $LOG;
+  if (count($LOG) === 50) return;
+  $LOG[] = $log;
+}
 
 // Check comment
 $comment_length = `$SVNLOOK log -t '$TXN' '$REPOS'`;
 if (strlen($comment_length) < 6){ 
-  $errors[] = 'Please provide a meaningful comment when committing changes';
+  report('Please provide a meaningful comment when committing changes');
 }
 
 
@@ -114,9 +119,12 @@ else {
       }
     }
 
-
     // Get extension
     $ext = pathinfo($FILE,PATHINFO_EXTENSION);
+    
+    if (!$ext) {
+      continue;
+    }
 
     $outputs = array();
 
@@ -127,12 +135,12 @@ else {
 
     // Detect encoding
     if (!mb_detect_encoding($content, 'UTF-8', TRUE)){
-      $errors[] = "Only UTF-8 files can be committed ('$FILE')";
+      report("Only UTF-8 files can be committed ('$FILE')");
     }
 
     // Detect eol
     if (!detectLF($content)){
-      $errors[] = "File EOL must use LF ('$FILE')";
+      report("File EOL must use LF ('$FILE')");
     }
 
     // Detect tab
@@ -140,7 +148,7 @@ else {
     $contents_length = count($contents);
     for($ii=1;$ii<=$contents_length;$ii++){
       if (preg_match('/\t/is', $contents[$ii-1])){
-        $errors[] = "$FILE contains 'Tab' character - on line $ii";
+        report("$FILE contains 'Tab' character - on line $ii");
       }
     }
 
@@ -153,7 +161,7 @@ else {
       $msg = exec("$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE' | $PHP -l 2>&1", $outputs);
       array_pop($outputs);
       foreach ($outputs as $op) {
-        $errors[] = $FILE. ': {{ '.$op. ' }}';
+        report($FILE. ': {{ '.$op. ' }}');
       }
 
       if (count($outputs)) {
@@ -167,7 +175,7 @@ else {
         foreach ($outputs as $op) {
           preg_match('/^\s*(\d+)\s*\|\s*(ERROR|WARNING)\s*\|(.*)$/i', $op, $match);
           if (count($match)){
-            $errors[] = $FILE. ': {{ '. $match[2]. $match[3]. ' on line '. $match[1]. ' }}';
+            report($FILE. ': {{ '. $match[2]. $match[3]. ' on line '. $match[1]. ' }}');
           }
         }
       }
@@ -177,14 +185,14 @@ else {
     case 'js':
       $msg = exec("$JSLINT \"`$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`\" 2>&1", $outputs);
       foreach ($outputs as $op) {
-        $errors[] = $FILE.': {{ '.$op.' }}';
+        report($FILE.': {{ '.$op.' }}');
       }
       break;
 
     case 'css':
       $msg = exec("$CSSLINT \"`$SVNLOOK cat -t '$TXN' '$REPOS' '$FILE'`\" 2>&1", $outputs);
       foreach ($outputs as $op) {
-        $errors[] = $FILE.': {{ '.$op.' }}';
+        report($FILE.': {{ '.$op.' }}');
       }
       break;
     }
@@ -192,6 +200,7 @@ else {
 }
 
 // Print all the errors in a nice list
+$errors = report('getData');
 $el = count($errors);
 if($el > 0){ 
   $elsl = strlen($el);
